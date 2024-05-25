@@ -1,0 +1,22 @@
+{
+    "notes": [
+        {
+            "id": 1,
+            "title": "Note 1",
+            "author": {
+                "name": "Author 1",
+                "email": "mail_1@gmail.com"
+            },
+            "content": "Content for note 1"
+        },
+        {
+            "id": 2,
+            "title": "Note 2",
+            "author": {
+                "name": "Author 2",
+                "email": "mail_2@gmail.com"
+            },
+            "content": "Content for note 2"
+        }
+    ]
+}
