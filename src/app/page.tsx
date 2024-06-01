@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef, act } from 'react';
 import Image from "next/image";
 import notesData from './../../data/notes.json';
 import axios from 'axios';
@@ -21,7 +21,17 @@ export default function Home() {
   //const [index,setIndex] = useState(0);
   const [posts,setPosts] = useState<Post[]>([]);
   const [activePage, setActivePage] = useState(1);
+  const [totalPages,setTotalPages] = useState(1);
+  const numOfPosts = useRef(0);
 
+
+
+  useEffect(()=>{const promise = axios.get(NOTES_URL);
+    promise.then(response=>{numOfPosts.current=response.data.length;
+      setTotalPages(Math.ceil(numOfPosts.current/POSTS_PER_PAGE)); //round up to the top, returns integer
+      console.log('Fetching numOfPosts---------------:', numOfPosts.current); // Log active page
+    }).catch(error => { console.log("Encountered an error:" + error)});
+  },[]);
   useEffect(() => {
     console.log('Fetching posts for page:', activePage); // Log active page
     const promise = axios.get(NOTES_URL, {
@@ -40,29 +50,39 @@ export default function Home() {
     setActivePage(newPage);
   }
 
+  function handleButtons(){
+    let pageButtons = [];
+    if(totalPages<=5){
+      for(let i=0;i<totalPages;i++)
+        pageButtons.push(i+1);
+    }
+    else if(activePage<3)
+      pageButtons=[1,2,3,4,5];
+    else if((totalPages-activePage) < 2)
+      pageButtons = [totalPages-4,totalPages-3,totalPages-2,totalPages-1,totalPages];
+    else{
+      pageButtons = [activePage-2,activePage-1,activePage,activePage+1,activePage+2];
+    }
+    return pageButtons;
+  }
+
   return (
-    <div>
+    <div className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
+        style={{ backgroundImage: `url('my-space2.png')`,backgroundAttachment: 'fixed', backgroundSize: 'contain', backgroundPosition: 'center' }}>
+    <div className="flex-col min-h-screen p-3">
         {/* Header */}
-        <div style={{ margin: '20px 0', fontWeight: 'bold', fontSize: '24px' }}>
-        <div className="text-center my-3">
-          Welcome to my Next.js app!
+        <div style={{ margin: '10px 0', fontWeight: 'bold', fontSize: '24px' ,color:'turquoise'}}>
+        <div className="text-center">
+          The New FaceBook
           </div>
         </div>
 
 
-        {/* Background
-        <div className="relative min-h-screen flex flex-col justify-between items-center"
-        style={{ backgroundImage: `url('Cool_guy_schotch.jpg')`, backgroundSize: 'contain', backgroundPosition: 'center' }}>
-        </div> */}
-
-
+      
         {/* Display the notes */}
-        <div>
-        <map name="print posts"></map>
-        </div>
-        <div>
+        <div className="flex-1 w-full overflow-y-auto p-4">
           {posts.map(post => (
-            <div key={post.id} className="note">
+            <div key={post.id} className="post">
               <h2>{post.title}</h2>
               <p>By: {post.author.name} ({post.author.email})</p>
               <p>{post.content}</p>
@@ -71,13 +91,21 @@ export default function Home() {
         </div>
 
         {/* Pages buttons */}
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-3">
-        <button onClick={()=>handlePageChange(activePage-1)} name="previous" >Previous</button>
-        <button onClick={()=>handlePageChange(1)} name="first" >First</button>
-        <button onClick={()=>handlePageChange(1)} name="page-1" >1</button>
-        <button onClick={()=>handlePageChange(2)} name="page-2" >2</button>
-        <button onClick={()=>handlePageChange(activePage + 1)} name="next" >Next</button>
-        {/* <button onClick={()=>handlePageChange()} name="last" >Last</button> */}
+        <div className="w-full fixed bottom-0 left-0 flex justify-center p-2 space-x-3">
+        <button name="previous" onClick={()=>handlePageChange(Math.max(activePage-1,1))}>Prev</button>
+        <button name="first" onClick={()=>handlePageChange(1)}>First</button>
+        
+        {handleButtons().map(page=>(<button key="{page}" 
+        name={'page-${page}'}
+        onClick={()=>handlePageChange(page)}
+        style={{ fontWeight: page === activePage ? 'bold' : 'normal' }}
+        >{page}
+        </button>))}
+
+
+        <button name="next" onClick={()=>handlePageChange(Math.min(activePage + 1,totalPages))}>Next</button>
+        <button name="last" onClick={()=>handlePageChange(totalPages)}>Last</button>
+        </div>
       </div>
     </div>
   );
