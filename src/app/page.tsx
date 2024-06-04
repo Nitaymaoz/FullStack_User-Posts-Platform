@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect,useRef, act } from 'react';
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import notesData from './../../data/notes.json';
 import axios from 'axios';
@@ -18,31 +18,33 @@ interface Post{
 }
 
 export default function Home() {
-  //const [index,setIndex] = useState(0);
   const [posts,setPosts] = useState<Post[]>([]);
   const [activePage, setActivePage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
-  const numOfPosts = useRef(0);
 
 
 
-  useEffect(()=>{const promise = axios.get(NOTES_URL);
-    promise.then(response=>{numOfPosts.current=response.data.length;
-      setTotalPages(Math.ceil(numOfPosts.current/POSTS_PER_PAGE)); //round up to the top, returns integer
-      console.log('Fetching numOfPosts---------------:', numOfPosts.current); // Log active page
-    }).catch(error => { console.log("Encountered an error:" + error)});
-  },[]);
   useEffect(() => {
     console.log('Fetching posts for page:', activePage); // Log active page
     const promise = axios.get(NOTES_URL, {
-        params: {
-          _page: activePage,
-          _per_page: POSTS_PER_PAGE
-        }});
-    promise.then(response => { console.log(response.data); // Log the data to verify structure
-    setPosts(Array.isArray(response.data) ? response.data : []);
-    }).catch(error => { console.log("Encountered an error:" + error)});
-  },[activePage]);
+      params: {
+        _page: activePage,
+        _per_page: POSTS_PER_PAGE
+      }
+    });
+  
+    promise.then(response => {
+      console.log(response.data); // show data in dev tools
+      setPosts(Array.isArray(response.data) ? response.data : []);
+      
+      const totalCount = parseInt(response.headers['x-total-count'], 10);
+      setTotalPages(Math.ceil(totalCount / POSTS_PER_PAGE));
+    }).catch(error => {
+      console.log("Encountered an error:" + error)
+    });
+  }, [activePage]); // optimized - re-rendering only when active page is changed.
+  
+  
 
 
   function handlePageChange(newPage:number){
