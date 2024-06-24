@@ -84,10 +84,10 @@ export default function Home() {
         {/* Display the notes */}
         <div className="flex-1 w-full overflow-y-auto p-4">
           {posts.map(post => (
-            <div key={post.id} className="post">
+            <div key={post.id} className="post" id={`${post.id.toString()}`} >
               <h2>{post.title}</h2>
-              <p>By: {post.author.name} ({post.author.email})</p>
-              <p>{post.content}</p>
+              <small>By: {post.author.name} ({post.author.email})</small>
+              <h2>{post.content}</h2>
             </div>
           ))}
         </div>
