@@ -22,7 +22,10 @@ export default function Home() {
   const [activePage, setActivePage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
 
-
+  // Call to server (frontend calls backend)
+  const promise2 = axios.get("http://localhost:3002/notes").then(response =>{
+    console.log(response);
+  });
 
   useEffect(() => {
     console.log('Fetching posts for page:', activePage); // Log active page
@@ -50,6 +53,10 @@ export default function Home() {
   function handlePageChange(newPage:number){
     console.log('Changing to page:', newPage); // Log page change
     setActivePage(newPage);
+  }
+
+  function test(){
+    console.log('test');
   }
 
   function handleButtons(){
@@ -96,6 +103,7 @@ export default function Home() {
         <div className="w-full fixed bottom-0 left-0 flex justify-center p-2 space-x-3">
         <button name="previous" onClick={()=>handlePageChange(Math.max(activePage-1,1))}>Prev</button>
         <button name="first" onClick={()=>handlePageChange(1)}>First</button>
+        <button name="test" onClick={()=>test()}>Test</button>
         
         {handleButtons().map(page=>(<button key="{page}" 
         name={'page-${page}'}
