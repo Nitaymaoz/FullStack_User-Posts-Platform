@@ -1,10 +1,11 @@
 const mngs = require('mongoose')
 
-//require("dotenv").config()
+require("dotenv").config()
 
 const express = require('express');
 const app = express();
 const cors = require("cors");
+const { env } = require('process');
 console.log("App listen at port 3002");
 app.use(express.json());
 app.use(cors());
@@ -49,7 +50,7 @@ app.put("/notes/:skipNumber", (req, resp) => {
       });
 });
 
-const MONGODB_CONNECTION_URL = 'mongodb+srv://kaze:Q0JnadLr1ix5jpo1@cluster0.iuj4hib.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const MONGODB_CONNECTION_URL = process.env.MONGODB_CONNECTION_URL;
 
 const noteSchema = new mngs.Schema({
     id: { type: Number, required: true },
