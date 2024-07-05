@@ -6,7 +6,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require("cors");
-console.log("App listen at port 3002");
+console.log(`App listen at port ${process.env.SERVER_PORT}`);
 app.use(express.json());
 app.use(cors());
 
@@ -89,8 +89,6 @@ app.delete("/notes/:skipNumber", (req, resp) => {
     });
 });
 
-//const MONGODB_CONNECTION_URL = 'mongodb+srv://kaze:Q0JnadLr1ix5jpo1@cluster0.iuj4hib.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-
 const noteSchema = new mngs.Schema({
     id: { type: Number, required: true },
     title: { type: String, required: true },
@@ -143,6 +141,6 @@ async function conn(){
         });
     });
 
-app.listen(3002);
+app.listen(process.env.SERVER_PORT);
 
 conn();

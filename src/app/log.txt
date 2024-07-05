@@ -1,0 +1,310 @@
+Time: Fri Jul 05 2024 23:54:15 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Fri Jul 05 2024 23:54:15 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /favicon.ico
+Request body: {}
+
+Time: Sat Jul 06 2024 00:01:24 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:01:25 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:01:27 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:01:32 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /
+Request body: {}
+
+Time: Sat Jul 06 2024 00:01:53 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:25 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:26 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:29 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:34 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:37 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:45 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:49 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:54 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/2
+Request body: {}
+
+Time: Sat Jul 06 2024 00:03:59 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:04:01 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:04:04 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/0
+Request body: {}
+
+Time: Sat Jul 06 2024 00:04:08 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:04:11 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/2
+Request body: {}
+
+Time: Sat Jul 06 2024 00:04:14 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/3
+Request body: {}
+
+Time: Sat Jul 06 2024 00:06:18 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:06:34 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/3
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:06:39 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/3
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:06:43 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/2
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:06:46 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:04 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/3
+Request body: {}
+
+Time: Sat Jul 06 2024 00:07:08 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/2
+Request body: {}
+
+Time: Sat Jul 06 2024 00:07:10 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:07:31 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:32 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:33 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:34 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:35 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:35 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:36 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:37 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:40 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:47 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:48 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:07:50 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: DELETE
+Request target path: /notes/0
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:08:59 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:09:03 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {"id":17,"title":"ti22tle144411","author":{"name":"Sho111","email":"emaillll145l"},"content":"12322"}
+
+Time: Sat Jul 06 2024 00:10:08 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: POST
+Request target path: /notes/
+Request body: {"id":0,"title":"0","author":{"name":"0","email":"0"},"content":"0"}
+
+Time: Sat Jul 06 2024 00:10:37 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: POST
+Request target path: /notes/
+Request body: {"id":1,"title":"1","author":{"name":"1","email":"1"},"content":"1"}
+
+Time: Sat Jul 06 2024 00:10:50 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: POST
+Request target path: /notes/
+Request body: {"id":2,"title":"2","author":{"name":"2","email":"2"},"content":"2"}
+
+Time: Sat Jul 06 2024 00:11:14 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: POST
+Request target path: /notes/
+Request body: {"id":3,"title":"3","author":{"name":"3","email":"3"},"content":"3"}
+
+Time: Sat Jul 06 2024 00:11:28 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: POST
+Request target path: /notes/
+Request body: {"id":4,"title":"4","author":{"name":"4","email":"4"},"content":"4"}
+
+Time: Sat Jul 06 2024 00:11:44 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: POST
+Request target path: /notes/
+Request body: {"id":5,"title":"5","author":{"name":"5","email":"5"},"content":"5"}
+
+Time: Sat Jul 06 2024 00:11:48 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {"id":5,"title":"5","author":{"name":"5","email":"5"},"content":"5"}
+
+Time: Sat Jul 06 2024 00:12:01 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:05 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:08 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/2
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:10 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/3
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:12 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/4
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:14 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/5
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:16 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:22 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/1
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:25 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/2
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:27 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/3
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:29 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/4
+Request body: {}
+
+Time: Sat Jul 06 2024 00:12:31 GMT+0300 (שעון ישראל (קיץ))
+HTTP request method: GET
+Request target path: /notes/5
+Request body: {}
+

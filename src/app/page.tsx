@@ -22,8 +22,8 @@ export default function Home() {
   const [activePage, setActivePage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
 
-  // Call to server (frontend calls backend)
-  const promise2 = axios.get("http://localhost:3002/notes").then(response =>{
+  // Call to server (front end calls backend)
+  const promise2 = axios.get("http://localhost:3001/notes").then(response =>{
     console.log(response);
   });
 
