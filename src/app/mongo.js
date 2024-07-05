@@ -1,8 +1,8 @@
 const mngs = require('mongoose')
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
-//require("dotenv").config()
 const express = require('express');
 const app = express();
 const cors = require("cors");
@@ -25,7 +25,8 @@ const requestLogger = (request, response, next) => {
 app.use(requestLogger)
 
 app.get("/notes", (req, resp) => {
-    Note.find().then(notes => {
+    // id:1 = sort by id ascending
+    Note.find().sort({id:1}).then(notes => {
        // resp.status(200).json({ error: `Notes successfully found` });
        resp.status(200).json({notes});
       })
@@ -36,7 +37,7 @@ app.get("/notes", (req, resp) => {
 });
 
 app.get("/notes/:skipNumber", (req, resp) => {
-    Note.findOne().skip(req.params.skipNumber).then(note => {
+    Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         resp.status(200).json({note});
        // resp.status(200).json({ error:  });
       })
@@ -47,7 +48,7 @@ app.get("/notes/:skipNumber", (req, resp) => {
 });
 
 app.put("/notes/:skipNumber", (req, resp) => {
-    Note.findOne().skip(req.params.skipNumber).then(note => {
+    Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         note.id = req.body.id == null ? note.author.id : req.body.id;
         note.title = req.body.title == null ? note.author.title : req.body.title;
         note.author.name = req.body.author.name == null ? note.author.name : req.body.author.name;
@@ -55,8 +56,7 @@ app.put("/notes/:skipNumber", (req, resp) => {
         note.content = req.body.content == null ? note.content : req.body.content;
         note.save()
         .then(savedNote => {
-          resp.json(savedNote);
-          resp.status(201).json({ message : `Note ${req.params.skipNumber} successfully saved`});
+          resp.status(201).json({savedNote});
         })
         .catch(error => {
      //     console.error('Failed to update note:', error.message);
@@ -70,7 +70,7 @@ app.put("/notes/:skipNumber", (req, resp) => {
 });
 
 app.delete("/notes/:skipNumber", (req, resp) => {
-    Note.findOne().skip(req.params.skipNumber).then(note => {
+    Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         if (!note) {
             return resp.status(404).json({ error: "Note not found" });
         }
@@ -90,7 +90,7 @@ app.delete("/notes/:skipNumber", (req, resp) => {
     });
 });
 
-const MONGODB_CONNECTION_URL = 'mongodb+srv://kaze:Q0JnadLr1ix5jpo1@cluster0.iuj4hib.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+//const MONGODB_CONNECTION_URL = 'mongodb+srv://kaze:Q0JnadLr1ix5jpo1@cluster0.iuj4hib.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
 const noteSchema = new mngs.Schema({
     id: { type: Number, required: true },
@@ -103,11 +103,11 @@ const noteSchema = new mngs.Schema({
 });
 
 async function conn(){
-    if(!MONGODB_CONNECTION_URL){
-        throw new Error("MONGODB_CONNECTION_URL is undefined");
-    }
+     if(!process.env.MONGODB_CONNECTION_URL){
+         throw new Error("MONGODB_CONNECTION_URL is undefined");
+     }
     try{
-        const connection = await mngs.connect(MONGODB_CONNECTION_URL);
+        const connection = await mngs.connect(process.env.MONGODB_CONNECTION_URL);
         console.log('Connected to Mongo');
     }
     catch(error){
@@ -136,8 +136,7 @@ async function conn(){
       
       note.save()
         .then(savedNote => {
-          resp.json(savedNote);
-          resp.status(201).json({ message: `Note ${req.params.skipNumber} successfully saved`});
+          resp.status(201).json({savedNote});
         })
         .catch(error => {
         //  console.error('Failed to save note:', error.message);
