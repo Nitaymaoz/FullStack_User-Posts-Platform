@@ -23,9 +23,9 @@ export default function Home() {
   const [totalPages,setTotalPages] = useState(1);
 
   // Call to server (front end calls backend)
-  const promise2 = axios.get("http://localhost:3001/notes").then(response =>{
-    console.log(response);
-  });
+  //  const promise2 = axios.get("http://localhost:3001/notes").then(response =>{
+  //    console.log(response);
+  //  });
 
   useEffect(() => {
     console.log('Fetching posts for page:', activePage); // Log active page
@@ -37,7 +37,8 @@ export default function Home() {
     });
   
     promise.then(response => {
-      console.log(response.data); // show data in dev tools
+      //console.log(response.data); // show data in dev tools
+      console.log(Array.isArray(response.data));
       setPosts(Array.isArray(response.data) ? response.data : []);
       
       const totalCount = parseInt(response.headers['x-total-count'], 10);
@@ -47,9 +48,6 @@ export default function Home() {
     });
   }, [activePage]); // optimized - re-rendering only when active page is changed.
   
-  
-
-
   function handlePageChange(newPage:number){
     console.log('Changing to page:', newPage); // Log page change
     setActivePage(newPage);

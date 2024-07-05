@@ -27,7 +27,7 @@ app.get("/notes", (req, resp) => {
     // id:1 = sort by id ascending
     Note.find().sort({id:1}).then(notes => {
        // resp.status(200).json({ error: `Notes successfully found` });
-       resp.status(200).json({notes});
+       resp.status(200).json(notes);
       })
       .catch(error => {
       //  console.error('Failed to get notes:', error.message);
