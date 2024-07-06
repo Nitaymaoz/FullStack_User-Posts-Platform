@@ -8,7 +8,11 @@ const app = express();
 const cors = require("cors");
 console.log(`App listen at port ${process.env.SERVER_PORT}`);
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  exposedHeaders: ['x-total-count']
+}));
+
+//toDo add await whenever sorting DB
 
 const requestLogger = (request, response, next) => {
     const date = new Date();
@@ -23,17 +27,43 @@ const requestLogger = (request, response, next) => {
 
 app.use(requestLogger)
 
-app.get("/notes", (req, resp) => {
-    // id:1 = sort by id ascending
-    Note.find().sort({id:1}).then(notes => {
-       // resp.status(200).json({ error: `Notes successfully found` });
-       resp.status(200).json(notes);
-      })
-      .catch(error => {
-      //  console.error('Failed to get notes:', error.message);
-        resp.status(500).json({ error: "Generic error response" });
-      });
+// app.get("/notes", async (req, resp) => {
+//   const totalCount = await Note.countDocuments();
+//     // id:1 = sort by id ascending
+//     Note.find().sort({id:1}).then(notes => {
+//        resp.set('x-total-count', notes.length); // Set the total count in the response header
+//        resp.status(200).json(notes);
+//       })
+//       .catch(error => {
+//         resp.status(500).json({ error: "Generic error response" });
+//       });
+// });
+
+app.get("/notes", async (req, resp) => {
+      resp.set('x-total-count', await Note.countDocuments()); // Set the total count in the response header
+      const _per_page = parseInt(req.query._per_page, 10);  //Todo check if less than 10 notes not crashing
+      const _page = parseInt(req.query._page, 10);
+
+      if (_page && _per_page) {
+          const skipNumber = _per_page * (_page - 1) ;
+          // id:1 = sort by id ascending
+          await Note.find().sort({ id: 1 }).skip(skipNumber).limit(_per_page).then(notes=>{
+            resp.status(200).json(notes);
+          }
+        ).catch (error=>{
+          resp.status(500).json({ error: `Generic error response when fetching ${_per_page} posts per_Page ` });
+        });
+      } else {
+          await Note.find().sort({ id: 1 }).then(notes=>{
+            resp.status(200).json(notes);
+          }
+        ).catch (error=>{
+          resp.status(500).json({ error: "Generic error response when fetching All notes" });
+        });
+      }
 });
+
+
 
 app.get("/notes/:skipNumber", (req, resp) => {
     Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {

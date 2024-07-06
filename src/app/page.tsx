@@ -37,7 +37,7 @@ export default function Home() {
     });
   
     promise.then(response => {
-      //console.log(response.data); // show data in dev tools
+      console.log(response.data); // show data in dev tools
       console.log(Array.isArray(response.data));
       setPosts(Array.isArray(response.data) ? response.data : []);
       
