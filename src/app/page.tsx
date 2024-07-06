@@ -21,6 +21,12 @@ export default function Home() {
   const [posts,setPosts] = useState<Post[]>([]);
   const [activePage, setActivePage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
+  const [newNote, setNewNote] = useState<Post>({
+    id: 0, //Todo change Id to be totalCount +1;
+    title: '',
+    author: { name: '', email: '' },
+    content: ''
+  });
 
   // Call to server (front end calls backend)
   //  const promise2 = axios.get("http://localhost:3001/notes").then(response =>{
@@ -42,6 +48,8 @@ export default function Home() {
       setPosts(Array.isArray(response.data) ? response.data : []);
       
       const totalCount = parseInt(response.headers['x-total-count'], 10);
+      setNewNote(prevNote => ({...prevNote, id: totalCount + 1 // Increment the total count for the new note ID     Check if working!!!!!!!!!!!!!!!!!!!
+      }));                        
       setTotalPages(Math.ceil(totalCount / POSTS_PER_PAGE));
     }).catch(error => {
       console.log("Encountered an error:" + error)
@@ -73,6 +81,24 @@ export default function Home() {
     return pageButtons;
   }
 
+  function handleAddNewNote() {
+    const newNoteData = {
+      id: newNote.id,
+      title: (document.getElementById('new-note-Title') as HTMLInputElement).value,
+      author: {
+        name: (document.getElementById('new-note-Author_Name') as HTMLInputElement).value,
+        email: (document.getElementById('new-note-Author_Email') as HTMLInputElement).value
+      },
+      content: (document.getElementById('new-note-Content') as HTMLInputElement).value
+    };
+    axios.post(NOTES_URL, newNoteData)
+      .then(response => {
+        setActivePage(activePage); // Refresh notes
+        setNewNote({ id: newNote.id , title: '', author: { name: '', email: '' }, content: '' });
+      })
+      .catch(error => console.log("Failed to add note:", error));
+  }
+
   return (
     <div className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
         style={{ backgroundImage: `url('my-space2.png')`,backgroundAttachment: 'fixed', backgroundSize: 'contain', backgroundPosition: 'center' }}>
@@ -82,6 +108,20 @@ export default function Home() {
         <div className="text-center">
           The New FaceBook
           </div>
+        </div>
+
+      {/* Button add new note */}
+        <div>
+          <input type="text" placeholder="new-note-Title" style={{ color: 'black' }}
+          />
+          <input type="text" placeholder="new-note-Author_Name" style={{ color: 'black' }}>
+          </input>
+          <input type="text" placeholder="new-note-Author_Email" style={{ color: 'black' }}>
+          </input>
+          <input type="textarea" placeholder="new-note-Content" style={{ color: 'black' }} >
+          </input>
+
+          <button name="New Note" onClick={()=>handleAddNewNote}>Add New Note</button>
         </div>
 
 
