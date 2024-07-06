@@ -78,10 +78,10 @@ app.get("/notes/:skipNumber", (req, resp) => {
 
 app.put("/notes/:skipNumber", (req, resp) => {
     Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
-        note.id = req.body.id == null ? note.author.id : req.body.id;
+        /*note.id = req.body.id == null ? note.author.id : req.body.id;
         note.title = req.body.title == null ? note.author.title : req.body.title;
         note.author.name = req.body.author.name == null ? note.author.name : req.body.author.name;
-        note.author.email = req.body.email == null ? note.author.email : req.body.author.email;
+        note.author.email = req.body.email == null ? note.author.email : req.body.author.email;*/
         note.content = req.body.content == null ? note.content : req.body.content;
         note.save()
         .then(savedNote => {

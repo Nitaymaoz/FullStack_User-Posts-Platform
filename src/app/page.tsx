@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Image from "next/image";
 import notesData from './../../data/notes.json';
 import axios from 'axios';
+import './design.css';
 
 const NOTES_URL = 'http://localhost:3001/notes'
 const POSTS_PER_PAGE = 10;
@@ -27,11 +28,6 @@ export default function Home() {
     author: { name: '', email: '' },
     content: ''
   });
-
-  // Call to server (front end calls backend)
-  //  const promise2 = axios.get("http://localhost:3001/notes").then(response =>{
-  //    console.log(response);
-  //  });
 
   useEffect(() => {
     console.log('Fetching posts for page:', activePage); // Log active page
@@ -99,9 +95,35 @@ export default function Home() {
       .catch(error => console.log("Failed to add note:", error));
   }
 
+ function handleEditNote(){
+  const editedNoteData = {
+    id: (document.getElementById('note-id') as HTMLInputElement).value,
+    title: (document.getElementById('new-note-Title') as HTMLInputElement).value,
+    author: {
+      name: (document.getElementById('new-note-Author_Name') as HTMLInputElement).value,
+      email: (document.getElementById('new-note-Author_Email') as HTMLInputElement).value
+    },
+    content: (document.getElementById('new-note-Content') as HTMLInputElement).value
+  };
+  axios.put(`${NOTES_URL}/${editedNoteData.id}`, editedNoteData)
+  .then(response => {
+    setActivePage(activePage); // Refresh notes
+  })
+  .catch(error => console.log("Failed to add note:", error));
+ }
+
+ function handleDeleteNote(){
+  const id = (document.getElementById('note-id') as HTMLInputElement).value;
+  axios.delete(`${NOTES_URL}/${id}`)
+  .then(response => {
+    setActivePage(activePage); // Refresh notes
+  })
+  .catch(error => console.log("Failed to add note:", error));
+ }
+
   return (
     <div className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
-        style={{ backgroundImage: `url('my-space2.png')`,backgroundAttachment: 'fixed', backgroundSize: 'contain', backgroundPosition: 'center' }}>
+        style={{ backgroundImage: `url('my-space2.png')`,backgroundAttachment: 'fixed', backgroundSize: 'cover', backgroundPosition: 'center' }}>
     <div className="flex-col min-h-screen p-3">
         {/* Header */}
         <div style={{ margin: '10px 0', fontWeight: 'bold', fontSize: '24px' ,color:'turquoise'}}>
@@ -112,16 +134,22 @@ export default function Home() {
 
       {/* Button add new note */}
         <div>
-          <input type="text" placeholder="new-note-Title" style={{ color: 'black' }}
+        <input type="text" id="note-id" placeholder="note-id" style={{ color: 'black' }}
           />
-          <input type="text" placeholder="new-note-Author_Name" style={{ color: 'black' }}>
+          <input type="text" id="new-note-Title" placeholder="new-note-Title" style={{ color: 'black' }}
+          />
+          <input type="text" id="new-note-Author_Name" placeholder="new-note-Author_Name" style={{ color: 'black' }}>
           </input>
-          <input type="text" placeholder="new-note-Author_Email" style={{ color: 'black' }}>
+          <input type="text" id="new-note-Author_Email" placeholder="new-note-Author_Email" style={{ color: 'black' }}>
           </input>
-          <input type="textarea" placeholder="new-note-Content" style={{ color: 'black' }} >
+          <input type="textarea" id="new-note-Content" placeholder="new-note-Content" style={{ color: 'black' }} >
           </input>
 
-          <button name="New Note" onClick={()=>handleAddNewNote}>Add New Note</button>
+          <div className="button-container">
+            <button className="button1" name="New Note" onClick={() => handleAddNewNote()}>Add New Note</button>
+            <button className="button2" name="Edit Note" onClick={() => handleEditNote()}>Edit Note</button>
+            <button className="button3" name="Delete Note" onClick={() => handleDeleteNote()}>Delete Note</button>
+          </div>
         </div>
 
 
@@ -139,20 +167,21 @@ export default function Home() {
 
         {/* Pages buttons */}
         <div className="w-full fixed bottom-0 left-0 flex justify-center p-2 space-x-3">
-        <button name="previous" onClick={()=>handlePageChange(Math.max(activePage-1,1))}>Prev</button>
-        <button name="first" onClick={()=>handlePageChange(1)}>First</button>
-        <button name="test" onClick={()=>test()}>Test</button>
-        
-        {handleButtons().map(page=>(<button key="{page}" 
+          <div className="button-container">
+            <button className="button4" name="previous" onClick={()=>handlePageChange(Math.max(activePage-1,1))}>Prev</button>
+            <button className="button4" name="first" onClick={()=>handlePageChange(1)}>First</button>
+          </div>
+        {handleButtons().map(page=>(<button className="button4" key="{page}" 
         name={'page-${page}'}
         onClick={()=>handlePageChange(page)}
         style={{ fontWeight: page === activePage ? 'bold' : 'normal' }}
         >{page}
         </button>))}
 
-
-        <button name="next" onClick={()=>handlePageChange(Math.min(activePage + 1,totalPages))}>Next</button>
-        <button name="last" onClick={()=>handlePageChange(totalPages)}>Last</button>
+          <div className="button-container">
+            <button className="button4" name="next" onClick={()=>handlePageChange(Math.min(activePage + 1,totalPages))}>Next</button>
+            <button className="button4" name="last" onClick={()=>handlePageChange(totalPages)}>Last</button>
+          </div>
         </div>
       </div>
     </div>
