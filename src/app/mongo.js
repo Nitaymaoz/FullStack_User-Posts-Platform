@@ -27,18 +27,6 @@ const requestLogger = (request, response, next) => {
 
 app.use(requestLogger)
 
-// app.get("/notes", async (req, resp) => {
-//   const totalCount = await Note.countDocuments();
-//     // id:1 = sort by id ascending
-//     Note.find().sort({id:1}).then(notes => {
-//        resp.set('x-total-count', notes.length); // Set the total count in the response header
-//        resp.status(200).json(notes);
-//       })
-//       .catch(error => {
-//         resp.status(500).json({ error: "Generic error response" });
-//       });
-// });
-
 app.get("/notes", async (req, resp) => {
       resp.set('x-total-count', await Note.countDocuments()); // Set the total count in the response header
       const _per_page = parseInt(req.query._per_page, 10);  //Todo check if less than 10 notes not crashing
@@ -65,8 +53,8 @@ app.get("/notes", async (req, resp) => {
 
 
 
-app.get("/notes/:skipNumber", (req, resp) => {
-    Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
+app.get("/notes/:skipNumber", async (req, resp) => {
+  await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         resp.status(200).json({note});
        // resp.status(200).json({ error:  });
       })
@@ -76,8 +64,8 @@ app.get("/notes/:skipNumber", (req, resp) => {
       });
 });
 
-app.put("/notes/:skipNumber", (req, resp) => {
-    Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
+app.put("/notes/:skipNumber", async (req, resp) => {
+    await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         /*note.id = req.body.id == null ? note.author.id : req.body.id;
         note.title = req.body.title == null ? note.author.title : req.body.title;
         note.author.name = req.body.author.name == null ? note.author.name : req.body.author.name;
@@ -98,8 +86,8 @@ app.put("/notes/:skipNumber", (req, resp) => {
       });
 });
 
-app.delete("/notes/:skipNumber", (req, resp) => {
-    Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
+app.delete("/notes/:skipNumber", async (req, resp) => {
+    await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         if (!note) {
             return resp.status(404).json({ error: "Note not found" });
         }
