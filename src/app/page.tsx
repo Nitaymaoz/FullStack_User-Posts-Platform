@@ -27,6 +27,7 @@ export default function Home() {
     content: ''
   });
   const [refresh, setRefresh] = useState(0);
+  const [highestNoteId, sethighestNoteId] = useState(1);
 
   useEffect(() => {
     console.log('Fetching posts for page:', activePage);
@@ -40,9 +41,10 @@ export default function Home() {
       setPosts(Array.isArray(response.data) ? response.data : []);
       
       const totalCount = parseInt(response.headers['x-total-count'], 10);
+      const highestNoteId = parseInt(response.headers['x-highest-id'], 10);
       setNewNote(prevNote => ({
         ...prevNote,
-        id: totalCount + 1
+        id: highestNoteId + 1
       }));
       setTotalPages(Math.ceil(totalCount / POSTS_PER_PAGE));
     }).catch(error => {
@@ -53,6 +55,13 @@ export default function Home() {
   function handlePageChange(newPage: number) {
     console.log('Changing to page:', newPage);
     setActivePage(newPage);
+  }
+
+  function clearTextfields() {
+    (document.getElementById('new-note-Title') as HTMLInputElement).value = '';
+    (document.getElementById('new-note-Author_Name') as HTMLInputElement).value = '';
+    (document.getElementById('new-note-Author_Email') as HTMLInputElement).value = '';
+    (document.getElementById('new-note-Content') as HTMLTextAreaElement).value = '';
   }
 
   function handleAddNewNote() {
@@ -68,14 +77,15 @@ export default function Home() {
     axios.post(NOTES_URL, newNoteData)
       .then(response => {
         setRefresh(refresh + 1);
-        setNewNote({ id: newNote.id, title: '', author: { name: '', email: '' }, content: '' });
+        setNewNote({ id: 0, title: '', author: { name: '', email: '' }, content: '' });
+        clearTextfields();
       })
       .catch(error => console.log("Failed to add note:", error));
   }
 
-  function handleEditNote() {
+  function handleEditNote(_id:number) {
     const editedNoteData = {
-      id: newNote.id,
+      id: _id, 
       title: (document.getElementById('new-note-Title') as HTMLInputElement).value,
       author: {
         name: (document.getElementById('new-note-Author_Name') as HTMLInputElement).value,
@@ -83,18 +93,18 @@ export default function Home() {
       },
       content: (document.getElementById('new-note-Content') as HTMLTextAreaElement).value
     };
-    axios.put(`${NOTES_URL}/${editedNoteData.id}`, editedNoteData)
+    axios.put(`${NOTES_URL}/${_id}`, editedNoteData)
       .then(response => {
         setRefresh(refresh + 1);
       })
       .catch(error => console.log("Failed to edit note:", error));
   }
 
-  function handleDeleteNote() {
-    const id = (document.getElementById('note-id') as HTMLInputElement).value;
-    axios.delete(`${NOTES_URL}/${id}`)
+
+  function handleDeleteNote(id: number) {
+    axios.delete(`${NOTES_URL}/${id}`) 
       .then(response => {
-        setRefresh(refresh + 1);
+        setRefresh(refresh + 1); // Refresh notes after deleting a note
       })
       .catch(error => console.log("Failed to delete note:", error));
   }
@@ -126,29 +136,37 @@ export default function Home() {
         </div>
 
         {/* Button add new note */}
-        <div>
-          <input type="text" id="new-note-Title" placeholder="new-note-Title" style={{ color: 'black' }} />
-          <input type="text" id="new-note-Author_Name" placeholder="new-note-Author_Name" style={{ color: 'black' }} />
-          <input type="text" id="new-note-Author_Email" placeholder="new-note-Author_Email" style={{ color: 'black' }} />
-          <textarea id="new-note-Content" placeholder="new-note-Content" style={{ color: 'black' }}></textarea>
+        <div className="input-area-container">
+          <div className="input-field-row">
+            <input type="text" id="new-note-Title" placeholder="new-note-Title" style={{ color: 'black' }} />
+            <input type="text" id="new-note-Author_Name" placeholder="new-note-Author_Name" style={{ color: 'black' }} />
+            <input type="text" id="new-note-Author_Email" placeholder="new-note-Author_Email" style={{ color: 'black' }} />
+          </div>
+            <textarea id="new-note-Content" placeholder="new-note-Content" style={{ color: 'black' }}></textarea>
+          
 
           <div className="button-container">
             <button className="button1" name="New Note" onClick={() => handleAddNewNote()}>Add New Note</button>
-            <button className="button2" name="Edit Note" onClick={() => handleEditNote()}>Edit Note</button>
-            <button className="button3" name="Delete Note" onClick={() => handleDeleteNote()}>Delete Note</button>
           </div>
         </div>
 
         {/* Display the notes */}
         <div className="flex-1 w-full overflow-y-auto p-4">
           {posts.map(post => (
-            <div key={post.id} className="note border p-4 mb-4 rounded shadow-lg bg-white bg-opacity-75 text-black">
-              <h2>{post.title}</h2>
-              <small>By: {post.author.name} ({post.author.email})</small>
-              <p>{post.content}</p>
+            <div key={post.id} className="note-container p-4 mb-4 rounded shadow-lg bg-white bg-opacity-75 text-black">
+              <div className="note-content">
+                <h2>{post.title}</h2>
+                <small>By: {post.author.name} ({post.author.email})</small>
+                <p>{post.content}</p>
+              </div>
+              <div className="button-container-post">
+              <button className="button3" name="Delete Note" onClick={() => handleDeleteNote(post.id)}>Delete Note</button>
+              <button className="button2" name="Edit Note" onClick={() => handleEditNote(post.id-1)}>Edit Note</button>
+              </div>
             </div>
           ))}
         </div>
+
 
         {/* Pages buttons */}
         <div className="w-full fixed bottom-0 left-0 flex justify-center p-2 space-x-3">

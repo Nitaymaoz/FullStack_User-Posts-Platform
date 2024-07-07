@@ -1,3 +1,53 @@
+.input-area-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.input-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.input-field-row input {
+  flex: 1;
+  margin-right: 10px;
+}
+.note-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-content {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.button3 {
+  background-color: red;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.button2 {
+  background-color: blue;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+
 .button-container {
     display: flex;
     justify-content: space-around;

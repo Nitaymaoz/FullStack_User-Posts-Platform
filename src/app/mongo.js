@@ -9,7 +9,7 @@ const cors = require("cors");
 console.log(`App listen at port ${process.env.SERVER_PORT}`);
 app.use(express.json());
 app.use(cors({
-  exposedHeaders: ['x-total-count']
+  exposedHeaders: ['x-total-count','x-highest-id']
 }));
 
 //toDo add await whenever sorting DB
@@ -28,7 +28,10 @@ const requestLogger = (request, response, next) => {
 app.use(requestLogger)
 
 app.get("/notes", async (req, resp) => {
-      resp.set('x-total-count', await Note.countDocuments()); // Set the total count in the response header
+      resp.set('x-total-count', await Note.countDocuments()); // set the total count in the response header
+      const highestNote = await Note.findOne().sort({ id: -1 }); // find the note with the highest id
+      const highestNoteId = highestNote.id;
+      resp.set('x-highest-id',highestNoteId);
       const _per_page = parseInt(req.query._per_page, 10);  //Todo check if less than 10 notes not crashing
       const _page = parseInt(req.query._page, 10);
 
@@ -86,24 +89,16 @@ app.put("/notes/:skipNumber", async (req, resp) => {
       });
 });
 
-app.delete("/notes/:skipNumber", async (req, resp) => {
-    await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
+app.delete("/notes/:id", async (req, resp) => {
+    const noteId = parseInt(req.params.id,10);
+    await Note.findOneAndDelete({ id: noteId }).then(note => {
         if (!note) {
-            return resp.status(404).json({ error: "Note not found" });
+          return resp.status(404).json({ error: "Note not found" });
         }
-
-        Note.findByIdAndDelete(note._id)
-            .then(() => {
-                resp.status(200).json({ message: `Note ${req.params.skipNumber} successfully deleted` });
-            })
-            .catch(error => {
-                //console.error('Failed to delete note:', error.message);
-                resp.status(500).json({ error: `Generic error response, cannot delete note: ${req.params.skipNumber}` });
-            });
+          resp.status(200).json({ message: `Note ${noteId} successfully deleted` });
     })
     .catch(error => {
-        //console.error('Failed to find note:', error.message);
-        resp.status(404).json({ error: `Unknown route/note number: ${req.params.skipNumber}` });
+        resp.status(500).json({ error: `Generic error response, cannot delete note: ${noteId}` });
     });
 });
 
