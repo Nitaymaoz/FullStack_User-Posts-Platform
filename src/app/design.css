@@ -177,3 +177,24 @@
     border: 1px solid #FFC229;
     word-wrap: break-word;
   }
+
+  .button5 {
+    background-color: #FF5733; 
+    color: white; 
+    border: 2px solid #FF5733;
+  }
+  
+  .button5:hover {
+    background-color: #FF5733;
+    color: yellow;
+  }  
+
+  .button5 + .button5 {
+    margin-left: 10px;
+  }
+  
+  .button5:active {
+    background-color: #FF5733;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }

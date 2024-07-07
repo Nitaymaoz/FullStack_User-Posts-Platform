@@ -27,6 +27,8 @@ export default function Home() {
     content: ''
   });
   const [refresh, setRefresh] = useState(0);
+  const [noteId, setNoteId] = useState<number | null>(null);
+  const [noteContent, setNoteContent] = useState<string>('');
 
   useEffect(() => {
     console.log('Fetching posts for page:', activePage);
@@ -82,32 +84,6 @@ export default function Home() {
       .catch(error => console.log("Failed to add note:", error));
   }
 
-  function handleEditNote(_id:number) {
-    const editedNoteData = {
-      id: _id, 
-      title: (document.getElementById('new-note-Title') as HTMLInputElement).value,
-      author: {
-        name: (document.getElementById('new-note-Author_Name') as HTMLInputElement).value,
-        email: (document.getElementById('new-note-Author_Email') as HTMLInputElement).value
-      },
-      content: (document.getElementById('new-note-Content') as HTMLTextAreaElement).value
-    };
-    axios.put(`${NOTES_URL}/${_id}`, editedNoteData)
-      .then(response => {
-        setRefresh(refresh + 1);
-      })
-      .catch(error => console.log("Failed to edit note:", error));
-  }
-
-
-  function handleDeleteNote(id: number) {
-    axios.delete(`${NOTES_URL}/${id}`) 
-      .then(response => {
-        setRefresh(refresh + 1); // Refresh notes after deleting a note
-      })
-      .catch(error => console.log("Failed to delete note:", error));
-  }
-
   function handleButtons() {
     let pageButtons = [];
     if (totalPages <= 5) {
@@ -122,6 +98,44 @@ export default function Home() {
     }
     return pageButtons;
   }
+
+  function onEditNote(note: Post) {
+    setNoteId(note.id);
+    setNoteContent(note.content);
+  }
+  
+  function onSaveNote(noteId: number) {
+    const editedNoteData = {
+      id: noteId, 
+      content: noteContent
+    };
+    axios.put(`${NOTES_URL}/${noteId}`, editedNoteData)
+      .then(response => {
+        setRefresh(refresh + 1);
+        setNoteId(null);
+      })
+      .catch(error => console.log("Failed to edit note:", error));
+  }
+
+  function onCancel() {
+    setNoteId(null);
+    setNoteContent('');
+  }
+
+  function handleDeleteNote(id: number) {
+    const isLastPost : boolean = posts.length == 1;
+    axios.delete(`${NOTES_URL}/${id}`) 
+      .then(response => {
+        if(isLastPost && activePage > 1){
+          setActivePage(activePage-1);
+        }
+        else{
+          setRefresh(refresh + 1); // Refresh notes after deleting a note
+        }
+      })
+      .catch(error => console.log("Failed to delete note:", error));
+  }
+  
 
   return (
     <div className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
@@ -149,22 +163,58 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Display the notes */}
-        <div className="flex-1 w-full overflow-y-auto p-4">
-          {posts.map(post => (
-            <div key={post.id} className="note-container p-4 mb-4 rounded shadow-lg bg-white bg-opacity-75 text-black">
-              <div className="note-content">
-                <h2>{post.title}</h2>
-                <small>By: {post.author.name} ({post.author.email})</small>
-                <p>{post.content}</p>
-              </div>
-              <div className="button-container-post">
-              <button className="button3" name="Delete Note" onClick={() => handleDeleteNote(post.id)}>Delete Note</button>
-              <button className="button2" name="Edit Note" onClick={() => handleEditNote(post.id-1)}>Edit Note</button>
-              </div>
-            </div>
-          ))}
-        </div>
+{/* Display the notes */}
+<div className="flex-1 w-full overflow-y-auto p-4">
+  {posts.map(post => (
+    <div key={post.id} className="note-container p-4 mb-4 rounded shadow-lg bg-white bg-opacity-75 text-black">
+      <div className="note-content">
+        <h2>{post.title}</h2>
+        <small>By: {post.author.name} ({post.author.email})</small>
+        {noteId === post.id ? (
+          <div>
+            < textarea
+              value={noteContent} 
+              onChange={(e) => setNoteContent(e.target.value)} 
+              name={`text_input-${post.id}`}  
+              style={{ color: 'black' }} 
+            />
+            <button 
+              onClick={() => onSaveNote(post.id)} 
+              name={`text_input_save-${post.id}`} 
+              className="button5"
+            >
+              Save
+            </button>
+            <button 
+              onClick={onCancel} 
+              name={`text_input_cancel-${post.id}`}
+              className="button5"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <p>{post.content}</p>
+        )}
+      </div>
+      <div className="button-container-post">
+        <button 
+          className="button3" 
+          onClick={() => handleDeleteNote(post.id)}  
+        >
+          Delete Note
+        </button>
+        <button 
+          className="button2" 
+          onClick={() => onEditNote(post)}  
+        >
+          Edit Note
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
 
 
         {/* Pages buttons */}

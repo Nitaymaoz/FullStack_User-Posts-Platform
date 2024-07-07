@@ -67,8 +67,9 @@ app.get("/notes/:skipNumber", async (req, resp) => {
       });
 });
 
-app.put("/notes/:skipNumber", async (req, resp) => {
-    await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
+app.put("/notes/:id", async (req, resp) => {
+    const noteId = parseInt(req.params.id,10);
+    await Note.findOne({id:noteId}).then(note => {
         note.content = req.body.content == null ? note.content : req.body.content;
         note.save()
         .then(savedNote => {
