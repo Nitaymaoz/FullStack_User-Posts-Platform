@@ -27,7 +27,6 @@ export default function Home() {
     content: ''
   });
   const [refresh, setRefresh] = useState(0);
-  const [highestNoteId, sethighestNoteId] = useState(1);
 
   useEffect(() => {
     console.log('Fetching posts for page:', activePage);

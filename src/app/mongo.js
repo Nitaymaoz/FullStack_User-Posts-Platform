@@ -69,22 +69,16 @@ app.get("/notes/:skipNumber", async (req, resp) => {
 
 app.put("/notes/:skipNumber", async (req, resp) => {
     await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
-        /*note.id = req.body.id == null ? note.author.id : req.body.id;
-        note.title = req.body.title == null ? note.author.title : req.body.title;
-        note.author.name = req.body.author.name == null ? note.author.name : req.body.author.name;
-        note.author.email = req.body.email == null ? note.author.email : req.body.author.email;*/
         note.content = req.body.content == null ? note.content : req.body.content;
         note.save()
         .then(savedNote => {
           resp.status(201).json({savedNote});
         })
         .catch(error => {
-     //     console.error('Failed to update note:', error.message);
           resp.status(500).json({ error: `Generic error response, cannot save note: ${req.params.skipNumber}` });
         });
       })
       .catch(error => {
-     //   console.error('Failed to update note:', error.message);
         resp.status(500).json({ error: `Generic error response, cannot update note: ${req.params.skipNumber}` });
       });
 });
@@ -149,7 +143,6 @@ async function conn(){
           resp.status(201).json({savedNote});
         })
         .catch(error => {
-        //  console.error('Failed to save note:', error.message);
         resp.status(500).json({ error: `Generic error response, cannot save note` });
         });
     });
