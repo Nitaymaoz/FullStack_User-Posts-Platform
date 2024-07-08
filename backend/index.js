@@ -6,7 +6,6 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require("cors");
-console.log(`App listen at port ${process.env.SERVER_PORT}`);
 app.use(express.json());
 app.use(cors({
   exposedHeaders: ['x-total-count','x-highest-id']
@@ -17,7 +16,7 @@ app.use(cors({
 const requestLogger = (request, response, next) => {
     const date = new Date();
     const msg = `Time: ${date}\nHTTP request method: ${request.method}\nRequest target path: ${request.path}\nRequest body: ${JSON.stringify(request.body)}\n\n`;
-    fs.appendFile(".\log.txt", msg, (error) => {
+    fs.appendFile("../backend/log.txt", msg, (error) => {
         if(error){
             console.log('Failed to write to log.txt', error);
         }
@@ -59,10 +58,8 @@ app.get("/notes", async (req, resp) => {
 app.get("/notes/:skipNumber", async (req, resp) => {
   await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
         resp.status(200).json({note});
-       // resp.status(200).json({ error:  });
       })
       .catch(error => {
-     //   console.error('Failed to get note:', error.message);
         resp.status(404).json({ error: `Unknown route/note number: ${req.params.skipNumber}`}); // Node:id = skipNumber + 1
       });
 });
@@ -148,6 +145,6 @@ async function conn(){
         });
     });
 
-app.listen(process.env.SERVER_PORT);
+app.listen(3001);
 
 conn();

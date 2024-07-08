@@ -37,11 +37,13 @@
 .note-content {
   flex: 1;
   margin-right: 10px;
+  justify-content: space-around;
 }
 
 .button-container {
   display: flex;
-  gap: 10px;
+  gap: 1px;
+  justify-content: center;
 }
 
 .button3 {
@@ -61,7 +63,7 @@
 }
 
 
-.button-container {
+.button-container2 {
     display: flex;
     justify-content: space-around;
     margin-top: 20px;

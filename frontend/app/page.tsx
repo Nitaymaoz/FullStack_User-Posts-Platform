@@ -199,7 +199,7 @@ export default function Home() {
       {/*toggle dark mode */}
       <div className="wrapper">
         <label className="switch">
-          <input type="checkbox" onChange={switchTheme} />
+          <input type="checkbox" name="change_theme" onChange={switchTheme} />
           <span className="slider round"></span>
         </label>
       </div>
@@ -214,7 +214,7 @@ export default function Home() {
             color: "turquoise",
           }}
         >
-          <div className="text-center">The New FaceBook</div>
+          <div className="text-center" style={{display: 'flex', justifyContent: 'center'}}>The New FaceBook</div>
         </div>
 
         {/* Button add new note */}
@@ -262,7 +262,7 @@ export default function Home() {
               </button>
             </div>
           ) : (
-            <div className="button-container">
+            <div className="button-container2">
               <button
                 className="button1"
                 name="add_new_note"
@@ -348,7 +348,7 @@ export default function Home() {
             >
               First
             </button>
-          </div>
+         
           {handleButtons().map((page) => (
             <button
               className="button4"
@@ -360,7 +360,7 @@ export default function Home() {
               {page}
             </button>
           ))}
-          <div className="button-container">
+
             <button
               className="button4"
               name="next"
@@ -377,7 +377,7 @@ export default function Home() {
             >
               Last
             </button>
-          </div>
+            </div>
         </div>
       </div>
     </div>
