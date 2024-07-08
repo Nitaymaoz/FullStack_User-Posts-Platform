@@ -15,6 +15,19 @@
   flex: 1;
   margin-right: 10px;
 }
+
+.note {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.75);
+  color: black;
+}
+
 .note-container {
   display: flex;
   justify-content: space-between;
@@ -171,7 +184,7 @@
     box-sizing: border-box;
   }
   
-  .note {
+  .note-content-box {
     color:#FFC229;
     width: 11em; 
     border: 1px solid #FFC229;
