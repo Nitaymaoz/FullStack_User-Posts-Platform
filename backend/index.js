@@ -17,7 +17,7 @@ app.use(cors({
 const requestLogger = (request, response, next) => {
     const date = new Date();
     const msg = `Time: ${date}\nHTTP request method: ${request.method}\nRequest target path: ${request.path}\nRequest body: ${JSON.stringify(request.body)}\n\n`;
-    fs.appendFile("src\\app\\log.txt", msg, (error) => {
+    fs.appendFile(".\log.txt", msg, (error) => {
         if(error){
             console.log('Failed to write to log.txt', error);
         }
