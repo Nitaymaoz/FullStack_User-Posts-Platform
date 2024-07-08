@@ -8,6 +8,18 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+[data-theme='light']{
+  --body-background: white;
+  --title: black;
+  --primary: blue;
+}
+
+[data-theme='dark']{
+  --body-background: rgb(52,52,52);
+  --title: white;
+  --primary: rgb(97,97,255);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -17,14 +29,16 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
+  color: var(--title);
+  background-color: var(--body-background);
+  /* background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); */
 }
+
 
 @layer utilities {
   .text-balance {

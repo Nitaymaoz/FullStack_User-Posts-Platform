@@ -178,16 +178,33 @@ export default function Home() {
       .catch((error) => console.log("Failed to delete note:", error));
   }
 
+const switchTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (e.target.checked) {
+    document.querySelector('body')?.setAttribute('data-theme', 'dark');
+  } else {
+    document.querySelector('body')?.setAttribute('data-theme', 'light');
+  }
+};
+
+
   return (
     <div
-      className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
-      style={{
-        backgroundImage: `url('my-space2.png')`,
-        backgroundAttachment: "fixed",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      // className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
+      // style={{
+      //   backgroundImage: `url('my-space2.png')`,
+      //   backgroundAttachment: "fixed",
+      //   backgroundSize: "cover",
+      //   backgroundPosition: "center",
+      // }}
     >
+      {/*toggle dark mode */}
+      <div className="wrapper">
+        <label className="switch">
+          <input type="checkbox" onChange={switchTheme}/>
+          <span className="slider round"></span>
+        </label>
+      </div>
+
       <div className="flex-col min-h-screen p-3">
         {/* Header */}
         <div
