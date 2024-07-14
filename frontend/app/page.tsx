@@ -20,6 +20,7 @@ export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [activePage, setActivePage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [newNote, setNewNote] = useState<Note>({
     id: 0,
     title: "",
@@ -178,13 +179,21 @@ export default function Home() {
       .catch((error) => console.log("Failed to delete note:", error));
   }
 
-  const switchTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      document.querySelector("body")?.setAttribute("data-theme", "dark");
-    } else {
-      document.querySelector("body")?.setAttribute("data-theme", "light");
-    }
-  };
+  // const switchTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.checked) {
+  //     document.querySelector("body")?.setAttribute("data-theme", "dark");
+  //   } else {
+  //     document.querySelector("body")?.setAttribute("data-theme", "light");
+  //   }
+  // };
+      const switchTheme = () => {
+        setIsDarkMode((prevMode) => {
+          const newMode = !prevMode;
+          document.querySelector("body")?.setAttribute("data-theme", newMode ? "dark" : "light");
+          return newMode;
+        });
+      };
+  
 
   return (
     <div
@@ -198,10 +207,9 @@ export default function Home() {
     >
       {/*toggle dark mode */}
       <div className="wrapper">
-        <label className="switch">
-          <input type="checkbox" name="change_theme" onChange={switchTheme} />
-          <span className="slider round"></span>
-        </label>
+        <button className="change_theme" name="change_theme" onClick={switchTheme}>
+          Change Theme
+        </button>
       </div>
 
       <div className="flex flex-col min-h-screen p-3 items-center justify-center">

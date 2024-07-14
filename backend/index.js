@@ -29,7 +29,7 @@ app.use(requestLogger)
 app.get("/notes", async (req, resp) => {
       resp.set('x-total-count', await Note.countDocuments()); // set the total count in the response header
       const highestNote = await Note.findOne().sort({ id: -1 }); // find the note with the highest id
-      const highestNoteId = highestNote.id;
+      highestNoteId = highestNote.id;
       resp.set('x-highest-id',highestNoteId);
       const _per_page = parseInt(req.query._per_page, 10);  //Todo check if less than 10 notes not crashing
       const _page = parseInt(req.query._page, 10);
@@ -57,10 +57,13 @@ app.get("/notes", async (req, resp) => {
 
 app.get("/notes/:skipNumber", async (req, resp) => {
   await Note.findOne().skip(req.params.skipNumber).sort({id:1}).then(note => {
+      if (!note) {
+        return resp.status(404).json({ error: `Unknown route/note number: ${req.params.skipNumber}` });// Node:id = skipNumber + 1
+      }
         resp.status(200).json({note});
       })
       .catch(error => {
-        resp.status(404).json({ error: `Unknown route/note number: ${req.params.skipNumber}`}); // Node:id = skipNumber + 1
+        resp.status(404).json({ error: `Unknown route/note number: ${req.params.skipNumber}`}); 
       });
 });
 
@@ -87,7 +90,7 @@ app.delete("/notes/:id", async (req, resp) => {
         if (!note) {
           return resp.status(404).json({ error: "Note not found" });
         }
-          resp.status(200).json({ message: `Note ${noteId} successfully deleted` });
+          resp.status(204).json({ message: `Note ${noteId} successfully deleted` });
     })
     .catch(error => {
         resp.status(500).json({ error: `Generic error response, cannot delete note: ${noteId}` });
@@ -119,13 +122,23 @@ async function conn(){
 
     const Note = mngs.model("Note", noteSchema);
 
-    app.post('/notes', (req, resp) => {
+    app.post('/notes', async (req, resp) => {
       const reqBody = req.body;
     
-      if (!reqBody.content || !reqBody.id || !reqBody.title || !reqBody.author.name || !reqBody.author.email) {
+      //!reqBody.content || !reqBody.id || !reqBody.title || !reqBody.author.name || !reqBody.author.email - original if request
+      if (!reqBody.content) {
         return resp.status(400).json({ error: 'Missing fields in the request' });
       }
-    
+      //testing if any other field is missing
+      if(!reqBody.id){
+        const highestNote = await Note.findOne().sort({ id: -1 }); // find the note with the highest id
+        const highestNoteId = highestNote.id;
+        reqBody.id=highestNoteId;
+      }
+      if(!reqBody.title) reqBody.title=" ";
+      if(!reqBody.author.name) reqBody.author.name=" ";
+      if(!reqBody.author.email) reqBody.author.email=" ";
+
       const note = new Note({
         id: reqBody.id,
         title: reqBody.title,
