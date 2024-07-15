@@ -73,7 +73,7 @@ app.put("/notes/:id", async (req, resp) => {
         note.content = req.body.content == null ? note.content : req.body.content;
         note.save()
         .then(savedNote => {
-          resp.status(201).json({savedNote});
+          resp.status(200).json({savedNote});
         })
         .catch(error => {
           resp.status(500).json({ error: `Generic error response, cannot save note: ${req.params.skipNumber}` });
