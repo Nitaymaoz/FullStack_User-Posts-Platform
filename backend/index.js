@@ -6,12 +6,17 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require("cors");
+const bcrypt = require('bcrypt');
+const costFactor = 12;
+
+const jwt = require('jsonwebtoken');
+const SECRET = process.env.SECRET;
+
 app.use(express.json());
 app.use(cors({
   exposedHeaders: ['x-total-count','x-highest-id']
 }));
 
-//toDo add await whenever sorting DB
 
 const requestLogger = (request, response, next) => {
     const date = new Date();
@@ -31,7 +36,7 @@ app.get("/notes", async (req, resp) => {
       const highestNote = await Note.findOne().sort({ id: -1 }); // find the note with the highest id
       highestNoteId = highestNote.id;
       resp.set('x-highest-id',highestNoteId);
-      const _per_page = parseInt(req.query._per_page, 10);  //Todo check if less than 10 notes not crashing
+      const _per_page = parseInt(req.query._per_page, 10); 
       const _page = parseInt(req.query._page, 10);
 
       if (_page && _per_page) {
@@ -166,6 +171,44 @@ async function conn(){
         resp.status(500).json({ error: `Generic error response, cannot save note` });
         });
     });
+
+    app.post('/users', async (req, resp) => {
+      const { name, email, username, password } = req.body;
+  
+      if (!name || !email || !username || !password) {
+          return resp.status(400).json({ error: `At least one of the required fields is missing` });
+      }
+  
+      try {
+          const passwordHash = await bcrypt.hash(password, costFactor);
+          const user = new User({ name, email, username, passwordHash });
+          const savedUser = await user.save();
+          resp.status(201).json(savedUser);
+      } catch (error) {
+          resp.status(500).json({ error: `Generic error response, create user` });
+      }
+  });
+
+  app.post('/login', async (req, resp) => {
+    const { username, password } = req.body;
+
+    try {
+        const loginUser = await User.findOne({ username });
+        if (!loginUser) {
+            return resp.status(401).json({ error: 'The username or password are incorrect' });
+        }
+
+        const passwordConfirmation = await bcrypt.compare(password, loginUser.passwordHash);
+        if (!passwordConfirmation) {
+            return resp.status(401).json({ error: 'The username or password are incorrect' });
+     }
+
+        const token = jwt.sign({ username: loginUser.username, id: loginUser._id }, SECRET);
+        resp.status(200).json({ token, name: loginUser.name, email: loginUser.email });
+    } catch (error) {
+        resp.status(500).json({ error: `Generic error response, cannot login` });
+    }
+});
 
 app.listen(3001);
 
