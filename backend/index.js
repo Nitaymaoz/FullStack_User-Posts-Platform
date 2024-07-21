@@ -107,6 +107,14 @@ const noteSchema = new mngs.Schema({
     content: { type: String, required: true }
 });
 
+const userSchema = new mngs.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    username: { type: String, required: true },
+    passwordHash: { type: String, required: true }
+  }
+);
+
 async function conn(){
      if(!process.env.MONGODB_CONNECTION_URL){
          throw new Error("MONGODB_CONNECTION_URL is undefined");
@@ -121,6 +129,7 @@ async function conn(){
 }
 
     const Note = mngs.model("Note", noteSchema);
+    const User = mngs.model("User",userSchema);
 
     app.post('/notes', async (req, resp) => {
       const reqBody = req.body;
