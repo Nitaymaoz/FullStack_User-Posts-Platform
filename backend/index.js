@@ -173,42 +173,65 @@ async function conn(){
     });
 
     app.post('/users', async (req, resp) => {
-      const { name, email, username, password } = req.body;
-  
-      if (!name || !email || !username || !password) {
-          return resp.status(400).json({ error: `At least one of the required fields is missing` });
+      const _name = req.body.name;
+      const _email = req.body.email;
+      const _username = req.body.username;
+      const _password = req.body.password;
+
+    
+      if (!_name || !_email || !_username || !_password) {
+        return resp.status(400).json({ error: 'At least one of the required fields is missing' });
       }
-  
+    
       try {
-          const passwordHash = await bcrypt.hash(password, costFactor);
-          const user = new User({ name, email, username, passwordHash });
-          const savedUser = await user.save();
-          resp.status(201).json(savedUser);
+        const passwordHash = await bcrypt.hash(_password, costFactor);
+    
+        const user = new User({
+          name:_name,
+          email:_email,
+          username:_username,
+          passwordHash:passwordHash
+        });
+    
+        user.save()
+          .then(savedUser => {
+            resp.status(201).json(savedUser);
+          })
+          .catch(error => {
+            resp.status(500).json({ error: 'Generic error response, create user' });
+          });
       } catch (error) {
-          resp.status(500).json({ error: `Generic error response, create user` });
+        resp.status(500).json({ error: 'Generic error response, create user' });
       }
-  });
+    });
 
-  app.post('/login', async (req, resp) => {
-    const { username, password } = req.body;
-
-    try {
-        const loginUser = await User.findOne({ username });
+    app.post('/login', async (req, resp) => {
+      const _username = req.body.username;
+      const _password = req.body.password;
+    
+      if (!_username || !_password) {
+        return resp.status(400).json({ error: 'Username or password is missing' });
+      }
+    
+      try {
+        const loginUser = await User.findOne({ _username });
         if (!loginUser) {
-            return resp.status(401).json({ error: 'The username or password are incorrect' });
+          return resp.status(401).json({ error: 'The username or password are incorrect' });
         }
-
-        const passwordConfirmation = await bcrypt.compare(password, loginUser.passwordHash);
+    
+        const passwordConfirmation = await bcrypt.compare(_password, loginUser.passwordHash);
         if (!passwordConfirmation) {
-            return resp.status(401).json({ error: 'The username or password are incorrect' });
-     }
-
+          return resp.status(401).json({ error: 'The username or password are incorrect' });
+        }
+    
         const token = jwt.sign({ username: loginUser.username, id: loginUser._id }, SECRET);
         resp.status(200).json({ token, name: loginUser.name, email: loginUser.email });
-    } catch (error) {
-        resp.status(500).json({ error: `Generic error response, cannot login` });
-    }
-});
+      } catch (error) {
+        console.error('Error logging in:', error.message); // Log the error message
+        console.error('Error details:', error); // Log the complete error details
+        resp.status(500).json({ error: 'Generic error response, cannot login' });
+      }
+    });
 
 app.listen(3001);
 

@@ -4,6 +4,8 @@ import axios from "axios";
 import "../styles/design.css";
 
 const NOTES_URL = "http://localhost:3001/notes";
+const USERS_URL = "http://localhost:3001/users";
+const LOGIN_URL = "http://localhost:3001/login";
 const NOTES_PER_PAGE = 10;
 
 interface Note {
@@ -31,6 +33,7 @@ export default function Home() {
   const [noteId, setNoteId] = useState<number | null>(null);
   const [noteContent, setNoteContent] = useState<string>("");
   const [addingNewNote, setAddingNewNote] = useState(false);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     console.log("Fetching Notes for page:", activePage);
@@ -193,6 +196,38 @@ export default function Home() {
           return newMode;
         });
       };
+
+
+      const handleRegister = async () => {
+        const userData = {
+            name: (document.getElementById("register-name")as HTMLInputElement).value,
+            email: (document.getElementById("register-email")as HTMLInputElement).value,
+            username: (document.getElementById("register-username")as HTMLInputElement).value,
+            password: (document.getElementById("register-password")as HTMLInputElement).value,
+        };
+    
+        try {
+            await axios.post(USERS_URL, userData);
+            // handle success (e.g., show a success message, clear form)
+        } catch (error) {
+            // handle error (e.g., show an error message)
+        }
+    };
+
+    const handleLogin = async () => {
+      const loginData = {
+          username: (document.getElementById("login-username")as HTMLInputElement).value,
+          password: (document.getElementById("login-password")as HTMLInputElement).value,
+      };
+  
+      try {
+          const response = await axios.post(LOGIN_URL, loginData);
+          setToken(response.data.token);
+          // save other user data if needed
+      } catch (error) {
+          // handle error (e.g., show an error message)
+      }
+  };
   
 
   return (
@@ -223,6 +258,24 @@ export default function Home() {
           }}
         >
           <div className="text-center" style={{display: 'flex', justifyContent: 'center'}}>The New FaceBook</div>
+        </div>
+
+        {/* Registration Form */}
+        <div>
+          <h2>Register</h2>
+          <input type="text" id="register-name" placeholder="Name" />
+          <input type="email" id="register-email" placeholder="Email" />
+          <input type="text" id="register-username" placeholder="Username" />
+          <input type="password" id="register-password" placeholder="Password" />
+          <button onClick={handleRegister}>Register</button>
+        </div>
+
+        {/* Login Form */}
+        <div>
+          <h2>Login</h2>
+          <input type="text" id="login-username" placeholder="Username" />
+          <input type="text" id="login-password" placeholder="Password" />
+          <button onClick={handleLogin}>Login</button>
         </div>
 
         {/* Button add new note */}
