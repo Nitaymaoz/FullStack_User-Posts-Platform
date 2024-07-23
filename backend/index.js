@@ -214,12 +214,14 @@ async function conn(){
       }
     
       try {
-        const loginUser = await User.findOne({ _username });
+        const loginUser = await User.findOne({ username: _username });
+        //console.log(loginUser);
         if (!loginUser) {
-          return resp.status(401).json({ error: 'The username or password are incorrect' });
+          return resp.status(401).json({ error: 'The username does not exist' });
         }
     
         const passwordConfirmation = await bcrypt.compare(_password, loginUser.passwordHash);
+        //console.log(passwordConfirmation);
         if (!passwordConfirmation) {
           return resp.status(401).json({ error: 'The username or password are incorrect' });
         }
@@ -227,8 +229,6 @@ async function conn(){
         const token = jwt.sign({ username: loginUser.username, id: loginUser._id }, SECRET);
         resp.status(200).json({ token, name: loginUser.name, email: loginUser.email });
       } catch (error) {
-        console.error('Error logging in:', error.message); // Log the error message
-        console.error('Error details:', error); // Log the complete error details
         resp.status(500).json({ error: 'Generic error response, cannot login' });
       }
     });
