@@ -199,6 +199,7 @@ export default function Home() {
 
 
       const handleRegister = async () => {
+        event.preventDefault(); // Prevent the default form submission
         const userData = {
             name: (document.getElementById("register-name")as HTMLInputElement).value,
             email: (document.getElementById("register-email")as HTMLInputElement).value,
@@ -208,13 +209,14 @@ export default function Home() {
     
         try {
             await axios.post(USERS_URL, userData);
-            // handle success (e.g., show a success message, clear form)
+            
         } catch (error) {
-            // handle error (e.g., show an error message)
+          console.log("Failed to add new user::", error);
         }
     };
 
     const handleLogin = async () => {
+      event.preventDefault(); // Prevent the default form submission
       const loginData = {
           username: (document.getElementById("login-username")as HTMLInputElement).value,
           password: (document.getElementById("login-password")as HTMLInputElement).value,
@@ -225,7 +227,7 @@ export default function Home() {
           setToken(response.data.token);
           // save other user data if needed
       } catch (error) {
-          // handle error (e.g., show an error message)
+        console.log("Failed to login:", error);
       }
   };
   
@@ -263,19 +265,23 @@ export default function Home() {
         {/* Registration Form */}
         <div>
           <h2>Register</h2>
-          <input type="text" id="register-name" placeholder="Name" />
-          <input type="email" id="register-email" placeholder="Email" />
-          <input type="text" id="register-username" placeholder="Username" />
-          <input type="password" id="register-password" placeholder="Password" />
-          <button onClick={handleRegister}>Register</button>
+          <form name="create_user_form">
+          <input type="text" name="create_user_form_name" id="register-name" placeholder="Name" />
+          <input type="text" name="create_user_form_email" id="register-email" placeholder="Email" />
+          <input type="text" name="create_user_form_username" id="register-username" placeholder="Username" />
+          <input type="password" name="create_user_form_password" id="register-password" placeholder="Password" />
+          <button onClick={handleRegister} name="create_user_form_create_user">Create User</button>
+          </form>
         </div>
 
         {/* Login Form */}
         <div>
           <h2>Login</h2>
-          <input type="text" id="login-username" placeholder="Username" />
-          <input type="text" id="login-password" placeholder="Password" />
-          <button onClick={handleLogin}>Login</button>
+          <form name="login_form">
+          <input type="text" name="login_form_username" id="login-username" placeholder="Username" />
+          <input type="text" name="login_form_password" id="login-password" placeholder="Password" />
+          <button onClick={handleLogin} name="login_form_login">Login</button>
+          </form>
         </div>
 
         {/* Button add new note */}
