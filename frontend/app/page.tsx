@@ -197,6 +197,11 @@ export default function Home() {
     axios
       .post(NOTES_URL, newNoteData)
       .then((response) => {
+        setNotes((prevNotes) => [...prevNotes, newNoteData]);
+        setCache((prevCache) => ({
+        ...prevCache,
+        [activePage]: [...prevCache[activePage], newNoteData],
+      }));
         setRefresh(refresh + 1);
         setNewNote({
           id: 0,
@@ -253,6 +258,11 @@ export default function Home() {
     axios
       .put(`${NOTES_URL}/${noteId}`, editedNoteData)
       .then((response) => {
+        setNotes((prevNotes) => prevNotes.map((note) => (note.id === noteId ? { ...note, content: noteContent } : note)));
+      setCache((prevCache) => ({
+        ...prevCache,
+        [activePage]: prevCache[activePage].map((note) => (note.id === noteId ? { ...note, content: noteContent } : note)),
+      }));
         setRefresh(refresh + 1);
         setNoteId(null);
       })
@@ -269,6 +279,13 @@ export default function Home() {
     axios
       .delete(`${NOTES_URL}/${id}`)
       .then((response) => {
+        setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+
+        setCache((prevCache) => ({
+          ...prevCache,
+          [activePage]: prevCache[activePage].filter((note) => note.id !== id),
+        }));
+
         if (isLastNote && activePage > 1) {
           setActivePage(activePage - 1);
         } else {
