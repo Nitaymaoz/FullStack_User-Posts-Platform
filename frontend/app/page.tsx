@@ -34,17 +34,77 @@ export default function Home() {
   const [noteContent, setNoteContent] = useState<string>("");
   const [addingNewNote, setAddingNewNote] = useState(false);
   const [token, setToken] = useState(null);
+  const [cache, setCache] = useState<{ [key: number]: Note[] }>({});
+
 
   useEffect(() => {
+    const fetchPages = async (pages: number[]) => {
+      const fetchPromises = pages.map((page) =>
+        axios.get(NOTES_URL, {
+          params: {
+            _page: page,
+            _per_page: NOTES_PER_PAGE,
+          },
+        })
+      );
+      const results = await Promise.all(fetchPromises);
+      const newCache = results.reduce((acc, res, idx) => {
+        acc[pages[idx]] = res.data;
+        return acc;
+      }, {});
+  
+      setCache((prevCache) => {
+        // Merge new cache with previous cache
+        const updatedCache = { ...prevCache, ...newCache };
+  
+        // Calculate pages to keep
+        const pagesToKeep = [];
+        if (totalPages <= 5) {
+          for (let i = 1; i <= totalPages; i++) pagesToKeep.push(i);
+        } else if (activePage < 3) {
+          pagesToKeep.push(1, 2, 3, 4, 5);
+        } else if (totalPages - activePage < 2) {
+          pagesToKeep.push(
+            totalPages - 4,
+            totalPages - 3,
+            totalPages - 2,
+            totalPages - 1,
+            totalPages
+          );
+        } else {
+          pagesToKeep.push(
+            activePage - 2,
+            activePage - 1,
+            activePage,
+            activePage + 1,
+            activePage + 2
+          );
+        }
+  
+        // Remove pages not in the range to keep
+        Object.keys(updatedCache).forEach((page) => {
+          if (!pagesToKeep.includes(Number(page))) {
+            delete updatedCache[Number(page)];
+          }
+        });
+  
+        return updatedCache;
+      });
+    };
+
+
+
+
+    //Fetch current page
+    const fetchCurrentPage = async () =>{
     console.log("Fetching Notes for page:", activePage);
-    axios
-      .get(NOTES_URL, {
+    try { 
+      const response =await axios.get(NOTES_URL, {
         params: {
           _page: activePage,
           _per_page: NOTES_PER_PAGE,
         },
       })
-      .then((response) => {
         console.log(response.data);
         setNotes(Array.isArray(response.data) ? response.data : []);
 
@@ -55,11 +115,47 @@ export default function Home() {
           id: highestNoteId + 1,
         }));
         setTotalPages(Math.ceil(totalCount / NOTES_PER_PAGE));
-      })
-      .catch((error) => {
+      }
+      catch(error){
         console.log("Encountered an error:" + error);
-      });
-  }, [activePage, refresh]);
+      }
+  };
+  
+  if (cache[activePage]) {
+    console.log("Using cached data for page:", activePage);
+    setNotes(cache[activePage]);
+  } else {
+    fetchCurrentPage();
+  }
+  let pagesToFetch = [];
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) pagesToFetch.push(i);
+  } else if (activePage < 3) {
+    pagesToFetch = [1, 2, 3, 4, 5];
+  } else if (totalPages - activePage < 2) {
+    pagesToFetch = [
+      totalPages - 4,
+      totalPages - 3,
+      totalPages - 2,
+      totalPages - 1,
+      totalPages,
+    ];
+  } else {
+    pagesToFetch = [
+      activePage - 2,
+      activePage - 1,
+      activePage,
+      activePage + 1,
+      activePage + 2,
+    ];
+  }
+
+  pagesToFetch = pagesToFetch.filter((page) => !cache[page]);
+
+  if (pagesToFetch.length > 0) {
+    fetchPages(pagesToFetch);
+  }
+}, [activePage, refresh, totalPages, cache]);
 
   function handlePageChange(newPage: number) {
     console.log("Changing to page:", newPage);
