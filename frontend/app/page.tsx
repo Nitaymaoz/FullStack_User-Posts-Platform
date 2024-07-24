@@ -18,13 +18,41 @@ interface Note {
   content: string;
 }
 
-export default function Home() {
-  const [notes, setNotes] = useState<Note[]>([]);
+export async function getStaticProps() {
+  const response = await axios.get(NOTES_URL, {
+    params: {
+      _page: 1,
+      _per_page: NOTES_PER_PAGE,
+    },
+  });
+
+  const initialNotes = response.data;
+  const totalCount = parseInt(response.headers["x-total-count"], 10);
+  const initialTotalPages = Math.ceil(totalCount / NOTES_PER_PAGE);
+  const initialHighestNoteId = parseInt(response.headers["x-highest-id"], 10);
+
+  return {
+    props: {
+      initialNotes,
+      initialTotalPages,
+      initialHighestNoteId,
+    },
+  };
+}
+
+interface HomeProps {
+  initialNotes: Note[];
+  initialTotalPages: number;
+  initialHighestNoteId: number;
+}
+
+export default function Home({ initialNotes, initialTotalPages, initialHighestNoteId }: HomeProps) {
+  const [notes, setNotes] = useState<Note[]>(initialNotes);
   const [activePage, setActivePage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [newNote, setNewNote] = useState<Note>({
-    id: 0,
+    id: initialHighestNoteId +1,
     title: "",
     author: { name: "", email: "" },
     content: "",
@@ -34,7 +62,7 @@ export default function Home() {
   const [noteContent, setNoteContent] = useState<string>("");
   const [addingNewNote, setAddingNewNote] = useState(false);
   const [token, setToken] = useState(null);
-  const [cache, setCache] = useState<{ [key: number]: Note[] }>({});
+  const [cache, setCache] = useState<{ [key: number]: Note[] }>({1:initialNotes});
 
 
   useEffect(() => {
