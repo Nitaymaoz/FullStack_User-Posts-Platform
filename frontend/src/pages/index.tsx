@@ -357,6 +357,10 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         }
     };
 
+    const handleLogout = () => {
+      setToken(null);
+    }
+
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault(); // Prevent the default form submission
       const loginData = {
@@ -416,15 +420,22 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
           </form>
         </div>
 
-        {/* Login Form */}
         <div>
-          <h2>Login</h2>
-          <form name="login_form" onSubmit={handleLogin}>
-          <input type="text" name="login_form_username" id="login-username" placeholder="Username" />
-          <input type="text" name="login_form_password" id="login-password" placeholder="Password" />
-          <button type="submit" name="login_form_login">Login</button>
-          </form>
-        </div>
+        {token ? (
+          <button className="button1" onClick={handleLogout}>
+            Logout
+          </button>
+        ) : (
+          <div>
+            <h2>Login</h2>
+            <form name="login_form" onSubmit={handleLogin}>
+              <input type="text" name="login_form_username" id="login-username" placeholder="Username" />
+              <input type="password" name="login_form_password" id="login-password" placeholder="Password" />
+              <button type="submit" name="login_form_login">Login</button>
+            </form>
+          </div>
+        )}
+      </div>
 
         {/* Button add new note */}
         <div className="input-area-container">
