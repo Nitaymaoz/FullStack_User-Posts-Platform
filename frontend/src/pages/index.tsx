@@ -1,7 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import "../styles/design.css";
 
 const NOTES_URL = "http://localhost:3001/notes";
 const USERS_URL = "http://localhost:3001/users";
@@ -51,6 +50,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   const [activePage, setActivePage] = useState(1);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const highestNodeIdref = useRef(0);
   const [newNote, setNewNote] = useState<Note>({
     id: initialHighestNoteId +1,
     title: "",
@@ -138,9 +138,10 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
         const totalCount = parseInt(response.headers["x-total-count"], 10);
         const highestNoteId = parseInt(response.headers["x-highest-id"], 10);
+        highestNodeIdref.current = highestNoteId;
         setNewNote((prevNote) => ({
           ...prevNote,
-          id: highestNoteId + 1,
+          id: highestNodeIdref.current + 1,
         }));
         setTotalPages(Math.ceil(totalCount / NOTES_PER_PAGE));
       }
@@ -208,7 +209,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
   function handleSaveNewNote() {
     const newNoteData = {
-      id: newNote.id,
+      id: highestNodeIdref.current,
       content: (document.getElementById("new-note-Content") as HTMLInputElement)
         .value,
       title: (document.getElementById("new-note-Title") as HTMLInputElement)
@@ -339,7 +340,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
       };
 
 
-      const handleRegister = async () => {
+      const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Prevent the default form submission
         const userData = {
             name: (document.getElementById("register-name")as HTMLInputElement).value,
@@ -356,7 +357,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         }
     };
 
-    const handleLogin = async () => {
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault(); // Prevent the default form submission
       const loginData = {
           username: (document.getElementById("login-username")as HTMLInputElement).value,
@@ -406,22 +407,22 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         {/* Registration Form */}
         <div>
           <h2>Register</h2>
-          <form name="create_user_form">
+          <form name="create_user_form" onSubmit={handleRegister}>
           <input type="text" name="create_user_form_name" id="register-name" placeholder="Name" />
           <input type="text" name="create_user_form_email" id="register-email" placeholder="Email" />
           <input type="text" name="create_user_form_username" id="register-username" placeholder="Username" />
           <input type="password" name="create_user_form_password" id="register-password" placeholder="Password" />
-          <button onClick={handleRegister} name="create_user_form_create_user">Create User</button>
+          <button type="submit" name="create_user_form_create_user">Create User</button>
           </form>
         </div>
 
         {/* Login Form */}
         <div>
           <h2>Login</h2>
-          <form name="login_form">
+          <form name="login_form" onSubmit={handleLogin}>
           <input type="text" name="login_form_username" id="login-username" placeholder="Username" />
           <input type="text" name="login_form_password" id="login-password" placeholder="Password" />
-          <button onClick={handleLogin} name="login_form_login">Login</button>
+          <button type="submit" name="login_form_login">Login</button>
           </form>
         </div>
 
