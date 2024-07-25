@@ -50,9 +50,9 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   const [activePage, setActivePage] = useState(1);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const highestNodeIdref = useRef(0);
-  highestNodeIdref.current=initialHighestNoteId;
-  console.log("initialHighestNoteId from Home" , initialHighestNoteId);
+  const [highestNodeId,setHighestNodeId] = useState(1);
+  if(highestNodeId<initialHighestNoteId) setHighestNodeId(initialHighestNoteId);
+
   const [newNote, setNewNote] = useState<Note>({
     id: initialHighestNoteId +1,
     title: "",
@@ -138,8 +138,6 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         }, 
       })
         const highestNoteId = parseInt(response.headers["x-highest-id"], 10);
-        highestNodeIdref.current = highestNoteId;
-        console.log("initialHighestNoteId from UseEffect",initialHighestNoteId);
         console.log(response.data);
         setNotes(Array.isArray(response.data) ? response.data : []);
 
@@ -147,7 +145,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         
         setNewNote((prevNote) => ({
           ...prevNote,
-          id: highestNodeIdref.current + 1,
+          id: highestNodeId + 1,
         }));
         setTotalPages(Math.ceil(totalCount / NOTES_PER_PAGE));
       }
@@ -215,14 +213,14 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
   function handleSaveNewNote() {
     // Increment the highestNodeIdref.current
-    console.log("Old highestNodeIdref.current:", highestNodeIdref.current);
+    console.log("Old highestNodeIdref.current:", highestNodeId);
 
-    highestNodeIdref.current += 1;
-    console.log("New highestNodeIdref.current:", highestNodeIdref.current);
+    
+    console.log("New highestNodeIdref.current:", highestNodeId);
     
     // Create the new note data
     const newNoteData = {
-      id: highestNodeIdref.current,
+      id: highestNodeId+1,
       content: (document.getElementById("new-note-Content") as HTMLInputElement).value,
       title: (document.getElementById("new-note-Title") as HTMLInputElement).value,
       author: {
@@ -241,8 +239,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         }
       })
       .then((response) => {
-        console.log("Response from server:", response.data);
-  
+        setHighestNodeId(highestNodeId+1);
         // Update the notes state
         setNotes((prevNotes) => [...prevNotes, newNoteData]);
   
@@ -405,10 +402,8 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
       try {
           const response = await axios.post(LOGIN_URL, loginData);
           setToken(response.data.token);
-          setCurrUserName((response.data.name).toString());
+          setCurrUserName(response.data.name);
           setcurrUserEmail(response.data.email);
-          console.log(currUserName);
-          console.log(currUserEmail);
       } catch (error) {
         console.log("Failed to login:", error);
       }
