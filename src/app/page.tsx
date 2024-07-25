@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/design.css";
+import "../pages/design.css";
 
 const NOTES_URL = "http://localhost:3001/notes";
 const USERS_URL = "http://localhost:3001/users";
@@ -18,41 +18,13 @@ interface Note {
   content: string;
 }
 
-export async function getStaticProps() {
-  const response = await axios.get(NOTES_URL, {
-    params: {
-      _page: 1,
-      _per_page: NOTES_PER_PAGE,
-    },
-  });
-
-  const initialNotes = response.data;
-  const totalCount = parseInt(response.headers["x-total-count"], 10);
-  const initialTotalPages = Math.ceil(totalCount / NOTES_PER_PAGE);
-  const initialHighestNoteId = parseInt(response.headers["x-highest-id"], 10);
-
-  return {
-    props: {
-      initialNotes,
-      initialTotalPages,
-      initialHighestNoteId,
-    },
-  };
-}
-
-interface HomeProps {
-  initialNotes: Note[];
-  initialTotalPages: number;
-  initialHighestNoteId: number;
-}
-
-export default function Home({ initialNotes, initialTotalPages, initialHighestNoteId }: HomeProps) {
-  const [notes, setNotes] = useState<Note[]>(initialNotes);
+export default function Home() {
+  const [notes, setNotes] = useState<Note[]>([]);
   const [activePage, setActivePage] = useState(1);
-  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [totalPages, setTotalPages] = useState(1);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [newNote, setNewNote] = useState<Note>({
-    id: initialHighestNoteId +1,
+    id: 0,
     title: "",
     author: { name: "", email: "" },
     content: "",
@@ -62,7 +34,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   const [noteContent, setNoteContent] = useState<string>("");
   const [addingNewNote, setAddingNewNote] = useState(false);
   const [token, setToken] = useState(null);
-  const [cache, setCache] = useState<{ [key: number]: Note[] }>({1:initialNotes});
+  const [cache, setCache] = useState<{ [key: number]: Note[] }>({});
 
 
   useEffect(() => {
@@ -119,9 +91,6 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         return updatedCache;
       });
     };
-
-
-
 
     //Fetch current page
     const fetchCurrentPage = async () =>{
@@ -225,11 +194,13 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
     axios
       .post(NOTES_URL, newNoteData)
       .then((response) => {
-        setNotes((prevNotes) => [...prevNotes, newNoteData]);
-        setCache((prevCache) => ({
-        ...prevCache,
-        [activePage]: [...prevCache[activePage], newNoteData],
-      }));
+        setCache((prevCache) => {
+          const updatedCache = { ...prevCache };
+          if (updatedCache[activePage]) {
+            updatedCache[activePage].push(newNoteData);
+          }
+          return updatedCache;
+        });
         setRefresh(refresh + 1);
         setNewNote({
           id: 0,
@@ -286,11 +257,6 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
     axios
       .put(`${NOTES_URL}/${noteId}`, editedNoteData)
       .then((response) => {
-        setNotes((prevNotes) => prevNotes.map((note) => (note.id === noteId ? { ...note, content: noteContent } : note)));
-      setCache((prevCache) => ({
-        ...prevCache,
-        [activePage]: prevCache[activePage].map((note) => (note.id === noteId ? { ...note, content: noteContent } : note)),
-      }));
         setRefresh(refresh + 1);
         setNoteId(null);
       })
@@ -307,13 +273,6 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
     axios
       .delete(`${NOTES_URL}/${id}`)
       .then((response) => {
-        setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
-
-        setCache((prevCache) => ({
-          ...prevCache,
-          [activePage]: prevCache[activePage].filter((note) => note.id !== id),
-        }));
-
         if (isLastNote && activePage > 1) {
           setActivePage(activePage - 1);
         } else {
