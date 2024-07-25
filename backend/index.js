@@ -96,6 +96,12 @@ app.get("/notes/:skipNumber", async (req, resp) => {
 app.put("/notes/:id", authMiddleware ,async (req, resp) => {
     const noteId = parseInt(req.params.id,10);
     await Note.findOne({id:noteId}).then(note => {
+      if (!note) {
+        return resp.status(404).json({ error: "Note not found" });
+    }
+    if (note.author.name !== req.user.username) {
+      return resp.status(403).json({ error: "you don't have permission to edit this note" });
+  }
         note.content = req.body.content == null ? note.content : req.body.content;
         note.save()
         .then(savedNote => {
@@ -112,16 +118,27 @@ app.put("/notes/:id", authMiddleware ,async (req, resp) => {
 
 app.delete("/notes/:id", authMiddleware ,async (req, resp) => {
     const noteId = parseInt(req.params.id,10);
-    await Note.findOneAndDelete({ id: noteId }).then(note => {
+    await Note.findOne({ id: noteId }).then(note => {
         if (!note) {
           return resp.status(404).json({ error: "Note not found" });
         }
-          resp.status(204).json({ message: `Note ${noteId} successfully deleted` });
-    })
-    .catch(error => {
-        resp.status(500).json({ error: `Generic error response, cannot delete note: ${noteId}` });
-    });
-});
+        if (note.author.name !== req.user.username) {
+          return resp.status(403).json({ error: "Forbidden: You do not have permission to delete this note" });
+      }
+      Note.findOneAndDelete({ id: noteId }).then(deletedNote => {
+        if (!deletedNote) {
+            return resp.status(404).json({ error: "Note not found" });
+        }
+      resp.status(204).json({ message: `Note ${noteId} successfully deleted` });
+      })
+          .catch(error => {
+            resp.status(500).json({ error: `Generic error response, cannot delete note: ${noteId}` });
+              });
+            })
+        .catch(error => {
+          resp.status(500).json({ error: `Generic error response, cannot find note: ${noteId}` });
+       });
+      });
 
 const noteSchema = new mngs.Schema({
     id: { type: Number, required: true },

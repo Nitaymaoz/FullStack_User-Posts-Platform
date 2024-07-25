@@ -70,6 +70,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
 
   useEffect(() => {
+    let isMounted = true;
     const fetchPages = async (pages: number[]) => {
       const fetchPromises = pages.map((page) =>
         axios.get(NOTES_URL, {
@@ -80,6 +81,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         })
       );
       const results = await Promise.all(fetchPromises);
+      if(isMounted){
       const newCache = results.reduce((acc, res, idx) => {
         acc[pages[idx]] = res.data;
         return acc;
@@ -122,7 +124,9 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   
         return updatedCache;
       });
+    }
     };
+    
 
 
 
@@ -137,6 +141,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
           _per_page: NOTES_PER_PAGE,
         }, 
       })
+      if(isMounted){
         const highestNoteId = parseInt(response.headers["x-highest-id"], 10);
         console.log(response.data);
         setNotes(Array.isArray(response.data) ? response.data : []);
@@ -149,8 +154,9 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         }));
         setTotalPages(Math.ceil(totalCount / NOTES_PER_PAGE));
       }
+      }
       catch(error){
-        console.log("Encountered an error:" + error);
+        if(isMounted) console.log("Encountered an error:" + error);
       }
   };
   
@@ -188,7 +194,10 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   if (pagesToFetch.length > 0) {
     fetchPages(pagesToFetch);
   }
-}, [activePage, refresh, totalPages, cache]);
+  return () => {
+    isMounted = false; // Cleanup function 
+  };
+}, [highestNodeId,activePage, refresh, totalPages, cache]);
 
   function handlePageChange(newPage: number) {
     console.log("Changing to page:", newPage);
