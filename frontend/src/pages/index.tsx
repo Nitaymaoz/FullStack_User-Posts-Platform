@@ -51,6 +51,8 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const highestNodeIdref = useRef(0);
+  highestNodeIdref.current=initialHighestNoteId;
+  console.log("initialHighestNoteId from Home" , initialHighestNoteId);
   const [newNote, setNewNote] = useState<Note>({
     id: initialHighestNoteId +1,
     title: "",
@@ -62,6 +64,8 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   const [noteContent, setNoteContent] = useState<string>("");
   const [addingNewNote, setAddingNewNote] = useState(false);
   const [token, setToken] = useState(null);
+  const [currUserName,setCurrUserName] = useState("");
+  const [currUserEmail,setcurrUserEmail] = useState("");
   const [cache, setCache] = useState<{ [key: number]: Note[] }>({1:initialNotes});
 
 
@@ -131,14 +135,16 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         params: {
           _page: activePage,
           _per_page: NOTES_PER_PAGE,
-        },
+        }, 
       })
+        const highestNoteId = parseInt(response.headers["x-highest-id"], 10);
+        highestNodeIdref.current = highestNoteId;
+        console.log("initialHighestNoteId from UseEffect",initialHighestNoteId);
         console.log(response.data);
         setNotes(Array.isArray(response.data) ? response.data : []);
 
         const totalCount = parseInt(response.headers["x-total-count"], 10);
-        const highestNoteId = parseInt(response.headers["x-highest-id"], 10);
-        highestNodeIdref.current = highestNoteId;
+        
         setNewNote((prevNote) => ({
           ...prevNote,
           id: highestNodeIdref.current + 1,
@@ -208,30 +214,46 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   }
 
   function handleSaveNewNote() {
+    // Increment the highestNodeIdref.current
+    console.log("Old highestNodeIdref.current:", highestNodeIdref.current);
+
+    highestNodeIdref.current += 1;
+    console.log("New highestNodeIdref.current:", highestNodeIdref.current);
+    
+    // Create the new note data
     const newNoteData = {
       id: highestNodeIdref.current,
-      content: (document.getElementById("new-note-Content") as HTMLInputElement)
-        .value,
-      title: (document.getElementById("new-note-Title") as HTMLInputElement)
-        .value,
+      content: (document.getElementById("new-note-Content") as HTMLInputElement).value,
+      title: (document.getElementById("new-note-Title") as HTMLInputElement).value,
       author: {
-        name: (
-          document.getElementById("new-note-Author_Name") as HTMLInputElement
-        ).value,
-        email: (
-          document.getElementById("new-note-Author_Email") as HTMLInputElement
-        ).value,
+        name: currUserName,
+        email: currUserEmail,
       },
     };
+  
+    console.log("New note data:", newNoteData);
+  
+    // Send the POST request
     axios
-      .post(NOTES_URL, newNoteData)
+      .post(NOTES_URL, newNoteData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then((response) => {
+        console.log("Response from server:", response.data);
+  
+        // Update the notes state
         setNotes((prevNotes) => [...prevNotes, newNoteData]);
+  
+        // Update the cache
         setCache((prevCache) => ({
-        ...prevCache,
-        [activePage]: [...prevCache[activePage], newNoteData],
-      }));
-        setRefresh(refresh + 1);
+          ...prevCache,
+          [activePage]: [...prevCache[activePage], newNoteData],
+        }));
+  
+        // Refresh and reset form
+        //setRefresh(refresh + 1);
         setNewNote({
           id: 0,
           title: "",
@@ -241,9 +263,11 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         clearTextfields();
         setAddingNewNote(false);
       })
-      .catch((error) => console.log("Failed to add note:", error));
+      .catch((error) => {
+        console.log("Failed to add note:", error);
+      });
   }
-
+  
   function handleCancelNewNote() {
     setAddingNewNote(false);
   }
@@ -285,7 +309,11 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
       content: noteContent,
     };
     axios
-      .put(`${NOTES_URL}/${noteId}`, editedNoteData)
+      .put(`${NOTES_URL}/${noteId}`, editedNoteData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then((response) => {
         setNotes((prevNotes) => prevNotes.map((note) => (note.id === noteId ? { ...note, content: noteContent } : note)));
       setCache((prevCache) => ({
@@ -306,7 +334,11 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   function handleDeleteNote(id: number) {
     const isLastNote: boolean = notes.length == 1;
     axios
-      .delete(`${NOTES_URL}/${id}`)
+      .delete(`${NOTES_URL}/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then((response) => {
         setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
 
@@ -359,6 +391,8 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
     const handleLogout = () => {
       setToken(null);
+      setCurrUserName("");
+      setcurrUserEmail("");
     }
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -371,7 +405,10 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
       try {
           const response = await axios.post(LOGIN_URL, loginData);
           setToken(response.data.token);
-          // save other user data if needed
+          setCurrUserName((response.data.name).toString());
+          setcurrUserEmail(response.data.email);
+          console.log(currUserName);
+          console.log(currUserEmail);
       } catch (error) {
         console.log("Failed to login:", error);
       }
@@ -483,6 +520,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
             </div>
           ) : (
             <div className="button-container2">
+              {token &&(
               <button
                 className="button1"
                 name="add_new_note"
@@ -490,6 +528,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
               >
                 Add New Note
               </button>
+              )}
             </div>
           )}
         </div>
@@ -532,6 +571,8 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
                 )}
               </div>
               <div className="button-container-Note">
+              {Note.author.name === currUserName &&(
+                <>
                 <button
                   className="button3"
                   name={`delete-${Note.id.toString()}`}
@@ -546,6 +587,8 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
                 >
                   Edit Note
                 </button>
+                </>
+              )}
               </div>
             </div>
           ))}

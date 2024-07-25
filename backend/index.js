@@ -18,6 +18,27 @@ app.use(cors({
 }));
 
 
+const authMiddleware = (req, resp, next) => {
+  const authorization = req.get('authorization');
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    const token = authorization.substring(7);
+    try {
+      const decodedToken = jwt.verify(token, SECRET);
+      if (!token || !decodedToken.id) {
+        return resp.status(401).json({ error: 'Unauthorized' });
+      }
+      req.user = decodedToken;
+      next();
+    } catch (error) {
+      return resp.status(401).json({ error: 'Unauthorized' });
+    }
+  } else {
+    return resp.status(401).json({ error: 'Unauthorized' });
+  }
+};
+
+
+
 const requestLogger = (request, response, next) => {
     const date = new Date();
     const msg = `Time: ${date}\nHTTP request method: ${request.method}\nRequest target path: ${request.path}\nRequest body: ${JSON.stringify(request.body)}\n\n`;
@@ -72,7 +93,7 @@ app.get("/notes/:skipNumber", async (req, resp) => {
       });
 });
 
-app.put("/notes/:id", async (req, resp) => {
+app.put("/notes/:id", authMiddleware ,async (req, resp) => {
     const noteId = parseInt(req.params.id,10);
     await Note.findOne({id:noteId}).then(note => {
         note.content = req.body.content == null ? note.content : req.body.content;
@@ -89,7 +110,7 @@ app.put("/notes/:id", async (req, resp) => {
       });
 });
 
-app.delete("/notes/:id", async (req, resp) => {
+app.delete("/notes/:id", authMiddleware ,async (req, resp) => {
     const noteId = parseInt(req.params.id,10);
     await Note.findOneAndDelete({ id: noteId }).then(note => {
         if (!note) {
@@ -136,7 +157,7 @@ async function conn(){
     const Note = mngs.model("Note", noteSchema);
     const User = mngs.model("User",userSchema);
 
-    app.post('/notes', async (req, resp) => {
+    app.post('/notes', authMiddleware,async (req, resp) => {
       const reqBody = req.body;
     
       //!reqBody.content || !reqBody.id || !reqBody.title || !reqBody.author.name || !reqBody.author.email - original if request
@@ -150,15 +171,15 @@ async function conn(){
         reqBody.id=highestNoteId;
       }
       if(!reqBody.title) reqBody.title=" ";
-      if(!reqBody.author.name) reqBody.author.name=" ";
-      if(!reqBody.author.email) reqBody.author.email=" ";
+      // if(!reqBody.author.name) reqBody.author.name=" ";
+      // if(!reqBody.author.email) reqBody.author.email=" ";
 
       const note = new Note({
         id: reqBody.id,
         title: reqBody.title,
         author: {
-          name: reqBody.author.name,
-          email: reqBody.author.email,
+          name: req.user.username,
+          email: req.user.email,
         },
         content: reqBody.content,
       });
