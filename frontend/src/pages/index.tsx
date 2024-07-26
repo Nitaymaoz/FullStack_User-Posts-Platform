@@ -133,10 +133,6 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
     }
     };
     
-
-
-
-
     //Fetch current page
     const fetchCurrentPage = async () =>{
     console.log("Fetching Notes for page:", activePage);
@@ -245,8 +241,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
     };
   
     console.log("New note data:", newNoteData);
-  
-    // Send the POST request
+    // accepted token will be saved in a React state and sent as an 'Authorization' header
     axios
       .post(NOTES_URL, newNoteData, {
         headers: {
@@ -255,7 +250,6 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
       })
       .then((response) => {
         setHighestNodeId(highestNodeId+1);
-        // Update the notes state
         setNotes((prevNotes) => [...prevNotes, newNoteData]);
   
         // Update the cache
@@ -265,7 +259,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         }));
   
         // Refresh and reset form
-        //setRefresh(refresh + 1);
+        //setRefresh(refresh + 1); is it required here?
         setNewNote({
           id: 0,
           title: "",
@@ -320,6 +314,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
       id: noteId,
       content: noteContent,
     };
+    // accepted token will be saved in a React state and sent as an 'Authorization' header
     axios
       .put(`${NOTES_URL}/${noteId}`, editedNoteData, {
         headers: {
@@ -345,6 +340,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
   function handleDeleteNote(id: number) {
     const isLastNote: boolean = notes.length == 1;
+    // accepted token will be saved in a React state and sent as an 'Authorization' header
     axios
       .delete(`${NOTES_URL}/${id}`, {
         headers: {
@@ -362,19 +358,12 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
         if (isLastNote && activePage > 1) {
           setActivePage(activePage - 1);
         } else {
-          setRefresh(refresh + 1); // Refresh notes after deleting a note
+          setRefresh(refresh + 1); // Refresh notes after deleting a note, is it required here?
         }
       })
       .catch((error) => console.log("Failed to delete note:", error));
   }
 
-  // const switchTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.checked) {
-  //     document.querySelector("body")?.setAttribute("data-theme", "dark");
-  //   } else {
-  //     document.querySelector("body")?.setAttribute("data-theme", "light");
-  //   }
-  // };
       const switchTheme = () => {
         setIsDarkMode((prevMode) => {
           const newMode = !prevMode;
@@ -385,7 +374,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
 
       const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault(); // avoid submission
         const userData = {
             name: (document.getElementById("register-name")as HTMLInputElement).value,
             email: (document.getElementById("register-email")as HTMLInputElement).value,
@@ -408,7 +397,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
     }
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault(); // Prevent the default form submission
+      event.preventDefault(); // avoid submission
       const loginData = {
           username: (document.getElementById("login-username")as HTMLInputElement).value,
           password: (document.getElementById("login-password")as HTMLInputElement).value,
@@ -426,15 +415,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
   
 
   return (
-    <div
-    // className="relative min-h-screen w-full bg-cover bg-no-repeat bg-center"
-    // style={{
-    //   backgroundImage: `url('my-space2.png')`,
-    //   backgroundAttachment: "fixed",
-    //   backgroundSize: "cover",
-    //   backgroundPosition: "center",
-    // }}
-    >
+    <div>
       {/*toggle dark mode */}
       <div className="wrapper">
         <button className="change_theme" name="change_theme" onClick={switchTheme}>
