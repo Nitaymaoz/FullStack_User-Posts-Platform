@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import '../app/design.css';
+
 
 const NOTES_URL = "http://localhost:3001/notes";
 const USERS_URL = "http://localhost:3001/users";
@@ -18,6 +20,7 @@ interface Note {
 }
 
 export async function getStaticProps() {
+  try{
   const response = await axios.get(NOTES_URL, {
     params: {
       _page: 1,
@@ -37,6 +40,9 @@ export async function getStaticProps() {
       initialHighestNoteId,
     },
   };
+  } catch(err){
+    console.log("getStaticProps error", err);
+  }
 }
 
 interface HomeProps {
@@ -463,7 +469,7 @@ export default function Home({ initialNotes, initialTotalPages, initialHighestNo
 
         <div>
         {token ? (
-          <button className="button1" onClick={handleLogout}>
+          <button className="button1" name="logout" onClick={handleLogout}>
             Logout
           </button>
         ) : (

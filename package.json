@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "playwright test",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "autoprefixer": "^10.4.19",
